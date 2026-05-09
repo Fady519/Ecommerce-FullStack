@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace E_commerce.Domain.Entites.ProductModule
+{
+    public class ProductType : BaseEntitey<int>
+    {
+
+        public string Name { get; set; } = default!;
+
+    }
+}
