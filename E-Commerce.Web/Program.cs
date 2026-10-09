@@ -22,10 +22,17 @@ namespace E_Commerce.Web
 
             #region Database migration and seeding
 
-            await app.MigrateDatabaseAsync();
-            await app.MigrateIdentityDatabaseAsync();
-            await app.SeedDatabaseAsync();
-            await app.SeedIdentityDatabaseAsync();
+            // One-off command (doesn't start the web server): dotnet run --project E-Commerce.Web -- --seed-demo
+            if (args.Contains("--seed-demo"))
+            {
+                await app.SeedDemoDataAsync();
+                return;
+            }
+
+            // On by default in Development only (appsettings.Development.json). On the server the database is
+            // updated on purpose, not as a side effect of the app restarting.
+            if (app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
+                await app.MigrateAndSeedAsync();
 
             #endregion
 
@@ -52,6 +59,9 @@ namespace E_Commerce.Web
 
             app.UseAuthentication();  // 1) who are you?
             app.UseAuthorization();   // 2) are you allowed?
+
+            // After CORS and auth: a cached catalog response still gets the right CORS headers.
+            app.UseOutputCache();
 
             app.MapControllers();
 
