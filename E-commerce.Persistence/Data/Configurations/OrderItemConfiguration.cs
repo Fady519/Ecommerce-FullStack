@@ -1,11 +1,6 @@
-﻿using E_commerce.Domain.Entities.OrderModule;
+using E_commerce.Domain.Entities.OrderModule;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E_commerce.Persistence.Data.Configurations
 {
@@ -13,15 +8,17 @@ namespace E_commerce.Persistence.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<OrderItem> builder)
         {
+            builder.ToTable(t => t.HasCheckConstraint("CK_OrderItems_Quantity", "[Quantity] > 0"));
 
-            builder.Property(X => X.Price).HasPrecision(8, 2);
-
+            // A snapshot of the product at order time (name, picture, and the Price column above).
+            // No foreign key on purpose: renaming or removing a product later must not change old orders.
             builder.OwnsOne(X => X.Product, OEntity =>
             {
-                OEntity.Property(X => X.ProductName).HasMaxLength(100);
-                OEntity.Property(X => X.PictureUrl).HasMaxLength(200);
+                OEntity.Property(X => X.ProductId).HasColumnName("ProductId");
+                OEntity.Property(X => X.ProductName).HasColumnName("ProductName").HasMaxLength(100);
+                OEntity.Property(X => X.PictureUrl).HasColumnName("PictureUrl").HasMaxLength(200);
+                OEntity.HasIndex(X => X.ProductId);
             });
-
         }
     }
 }

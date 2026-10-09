@@ -8,11 +8,17 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.12" />
-    <PackageReference Include="StackExchange.Redis" Version="2.12.14" />
   </ItemGroup>
 
+  <!-- Persistence only knows the domain (entities + repository contracts), never the services. -->
   <ItemGroup>
-    <ProjectReference Include="..\E-commerce.Services\E-commerce.Services.csproj" />
+    <ProjectReference Include="..\E-commerce.Domain\E-commerce.Domain.csproj" />
+  </ItemGroup>
+
+  <!-- Seed files are compiled INTO the dll, so seeding works on the server too
+       (the old code read them from a relative "..\" path that only exists on the developer's machine). -->
+  <ItemGroup>
+    <EmbeddedResource Include="Data\DataSeed\JsonFiles\*.json" LogicalName="SeedData.%(Filename)%(Extension)" />
   </ItemGroup>
 
 </Project>

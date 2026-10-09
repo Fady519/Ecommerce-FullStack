@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +14,9 @@ namespace E_commerce.Domain.Entities.IdentityModule
         public string DisplayName { get; set; } = default!;
 
         public Address? Address { get; set; }
+
+        /// <summary>When the account was created (used by the admin dashboard: new customers per month).</summary>
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
     }
 }

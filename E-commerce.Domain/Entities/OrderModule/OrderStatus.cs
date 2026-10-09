@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace E_commerce.Domain.Entities.OrderModule
 {
+    /// <summary>
+    /// The life of an order. Stored as text in the database ("Pending"...), so the table is readable without a lookup.
+    /// Normal path: Pending → PaymentReceived (card) → Shipped → Delivered.
+    /// Cash on delivery skips PaymentReceived: Pending → Shipped → Delivered (paid at the door).
+    /// </summary>
     public enum OrderStatus
     {
-
-        Pendding,
-        PaymentRecevied,
-        PaymentFailed
-
+        Pending,
+        PaymentReceived,
+        PaymentFailed,
+        Shipped,
+        Delivered,
+        Cancelled
     }
 }
