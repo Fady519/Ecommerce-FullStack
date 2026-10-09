@@ -1,4 +1,4 @@
-﻿using E_commerce.Shared.DTOs.OrderDTOs;
+using E_commerce.Shared.DTOs.OrderDTOs;
 using E_commerce.Shared.CommonResult;
 using System;
 using System.Collections.Generic;
@@ -11,16 +11,18 @@ namespace E_commerce.ServicesAbstraction
     public interface IOrderService
     {
 
-        Task<Result<OrderToReturnDTO>> CreateOrderAsync(OrderDTO orderDTO, string Email);
+        /// <param name="userId">From the token ("sub" claim) — never from the request body.</param>
+        /// <param name="email">Saved on the order as a snapshot.</param>
+        Task<Result<OrderToReturnDTO>> CreateOrderAsync(OrderDTO orderDTO, string userId, string email);
 
 
-        Task<Result<IEnumerable<OrderToReturnDTO>>> GetAllOrdersAsync(string Email);
+        Task<Result<IEnumerable<OrderToReturnDTO>>> GetAllOrdersAsync(string userId);
 
 
         Task<Result<IEnumerable<DeliveryMethodDTO>>> GetDeliveryMethods();
 
 
-        Task<Result<OrderToReturnDTO>> GetOrderByIdAsync(Guid id, string Email);
+        Task<Result<OrderToReturnDTO>> GetOrderByIdAsync(Guid id, string userId);
 
     }
 }

@@ -88,6 +88,9 @@ namespace E_commerce.Services
         {
             var Claims = new List<Claim>()
             {
+                // "sub" = the user's id. ASP.NET reads it back as ClaimTypes.NameIdentifier;
+                // orders are linked to this id (an email can change, the id never does).
+                new Claim(JwtRegisteredClaimNames.Sub , user.Id),
                 new Claim(JwtRegisteredClaimNames.Email , user.Email!),
                  new Claim(JwtRegisteredClaimNames.Name , user.UserName!),
             };

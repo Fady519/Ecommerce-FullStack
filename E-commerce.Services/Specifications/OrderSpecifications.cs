@@ -1,28 +1,24 @@
-﻿using E_commerce.Domain.Entities.OrderModule;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using E_commerce.Domain.Entities.OrderModule;
 
 namespace E_commerce.Services.Specifications
 {
     public class OrderSpecifications : BaseSpecifications<Order , Guid>
     {
-
-        public OrderSpecifications(string Email) : base(O => O.UserEmail == Email)
+        /// <summary>All orders of one user, newest first.</summary>
+        public OrderSpecifications(string userId) : base(O => O.UserId == userId)
         {
             AddInclude(O => O.DeliveryMethod);
             AddInclude(O => O.Items);
-            AddInclude(O => O.OrderData);
+            AddOrderByDescending(O => O.OrderDate);
         }
 
-        public OrderSpecifications(Guid id, string Email) : base(O => O.ID == id
-            && (string.IsNullOrEmpty(Email) || O.UserEmail.ToLower() == Email.ToLower()))
+        /// <summary>
+        /// One order, only if it belongs to this user (by id, not by email: an email can change, the id can't).
+        /// </summary>
+        public OrderSpecifications(Guid id, string userId) : base(O => O.ID == id && O.UserId == userId)
         {
             AddInclude(O => O.DeliveryMethod);
             AddInclude(O => O.Items);
         }
-
     }
 }

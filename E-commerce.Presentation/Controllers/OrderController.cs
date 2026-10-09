@@ -1,4 +1,4 @@
-﻿using E_commerce.ServicesAbstraction;
+using E_commerce.ServicesAbstraction;
 using E_commerce.Shared.DTOs.OrderDTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +24,7 @@ namespace E_commerce.Presentation.Controllers
         [HttpPost]
         public async Task<ActionResult<OrderToReturnDTO>> CreateOrder(OrderDTO orderDTO)
         {
-            var Result = await _orderService.CreateOrderAsync(orderDTO, GetEmailFromToken());
+            var Result = await _orderService.CreateOrderAsync(orderDTO, GetUserIdFromToken(), GetEmailFromToken());
             return HandleResult(Result);
         }
 
@@ -32,7 +32,7 @@ namespace E_commerce.Presentation.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrderToReturnDTO>>> GetOrders()
         {
-            var Oredrs = await _orderService.GetAllOrdersAsync(GetEmailFromToken());
+            var Oredrs = await _orderService.GetAllOrdersAsync(GetUserIdFromToken());
             return HandleResult(Oredrs);
         }
 
@@ -40,7 +40,7 @@ namespace E_commerce.Presentation.Controllers
         [HttpGet("{Id:guid}")]
         public async Task<ActionResult<OrderToReturnDTO>> GetOrder(Guid Id)
         {
-            var Oredr = await _orderService.GetOrderByIdAsync( Id , GetEmailFromToken());
+            var Oredr = await _orderService.GetOrderByIdAsync( Id , GetUserIdFromToken());
             return HandleResult(Oredr);
         }
 
@@ -54,6 +54,9 @@ namespace E_commerce.Presentation.Controllers
         }
 
 
+
+        // [Authorize] guarantees a valid token, and our tokens always carry the id ("sub") and email claims.
+        protected string GetUserIdFromToken() => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
         protected string GetEmailFromToken()
         {
