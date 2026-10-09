@@ -1,0 +1,332 @@
+
+:root{
+    --main-color: #0090f0;
+    --p-color: #7b7b7b;
+    --bg-color: #F3F3F3;
+    --white-color: #fff;
+    --color-heading: #253237;
+    --border-color: #d6d6d6d5;
+
+}
+
+.slide_products{
+    padding: 50px 0;
+}
+
+.top_slide{
+    position: relative;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding: 15px 20px 20px 0;
+}
+
+.top_slide::after{
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    width: 100px;
+    height: 2px;
+    background: var(--main-color);
+}
+
+.top_slide h2{
+    font-size: 30px;
+    color: var(--main-color);
+    margin-bottom: 10px;
+    text-transform: capitalize;
+}
+
+.top_slide {
+    margin-bottom: 15px; 
+    padding: 10px 0 15px 0; 
+}
+
+
+
+
+.product{
+    width: 250px;
+    background: var(--white-color);
+    padding: 25px 15px;
+    border: 1px solid var(--border-color);
+    transition: 0.3s;
+    border-radius: 5px;
+    position: relative;
+    overflow: hidden;
+}
+
+.product:hover{
+    border-color: var(--main-color);
+    box-shadow: 10px 10px 15px #949494;
+}
+
+.product .img_product{
+    position: relative;
+    height: 180px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.product .img_product img{
+    height: 160px;
+    width: auto;
+}
+
+.product .name_product{
+    margin-bottom: 10px;
+    color: var(--color-heading);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+
+}
+
+.product .stars{
+    margin: 15px 0;
+    display: flex;
+    gap: 5px;
+}
+
+.product .stars svg{
+    fill: #f8d941;
+    font-size: 18px;
+}
+
+.product .price{
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.product .icons{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    right: -50px;
+    gap: 10px;
+    transition: 0.3s;
+}
+
+.product .icons span{
+    width: 40px;
+    height: 40px;
+    background: var(--bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
+    cursor: pointer;
+
+}
+
+.product:hover .icons{
+    right: 20px;
+}
+
+.product.in-cart .icons .btn_addToCart{
+    background: var(--main-color);
+}
+
+.product.in-cart .icons .btn_addToCart svg{
+    background: var(--white-color);
+    pointer-events: none;
+}
+
+.product .status-cart{
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #253237;
+}
+
+.product.in-cart .status-cart{
+    top: 10px;
+}
+
+.product .status-cart svg{
+    color: rgb(44, 252, 3);
+}
+
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+}
+
+.product .img_product img{
+  max-width: 100%;
+  height: 160px;
+}
+
+
+.loading_slide_products .top_slide{
+    height: 105px;
+}
+
+.loading_slide_products .top_slide h2{
+    height: 35px;
+    width: 250px;
+}
+
+.loading_slide_products .top_slide p{
+    height: 25px;
+    width: 350px;
+}
+
+.products_loading{
+    display: flex;
+    gap: 30px;
+}
+
+.products_loading .content{
+    height: 30px;
+    margin-bottom: 10px;
+}
+
+
+.swiper-slide {
+  width: auto;
+}
+
+
+.product .icons span.in-fav{
+    background: var(--main-color);
+
+}
+
+
+.product .icons span.in-fav svg{
+    fill: var(--white-color);
+}
+
+
+
+/* Responsive */
+/* --- التعديلات الأساسية للـ Responsiveness --- */
+
+.slide_products {
+    padding: clamp(30px, 5vw, 60px) 0; /* مسافات مرنة */
+}
+
+.top_slide h2 {
+    font-size: clamp(22px, 4vw, 30px); /* حجم خط يتغير مع الشاشة */
+    color: var(--main-color);
+    margin-bottom: 10px;
+    text-transform: capitalize;
+}
+
+/* تعديل الكارت عشان يبقى Responsive */
+.product {
+    width: 280px; /* العرض الافتراضي للدسكتوب */
+    background: var(--white-color);
+    padding: 20px 15px;
+    border: 1px solid var(--border-color);
+    transition: 0.3s;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* تحسين شكل الصور عشان متتمطش */
+.product .img_product {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.product .img_product img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain; /* بيحافظ على أبعاد الصورة */
+}
+
+/* --- Media Queries الاحترافية --- */
+
+/* التابلت (أقل من 992px) */
+@media (max-width: 992px) {
+    .product {
+        width: 240px; /* تصغير الكارت شوية */
+        padding: 15px 10px;
+    }
+    
+    .product .img_product {
+        height: 150px;
+    }
+}
+
+/* الموبايل (أقل من 768px) */
+@media (max-width: 768px) {
+    .top_slide {
+        padding: 10px 10px 15px 0;
+        text-align: center; /* سنترة العنوان في الموبايل أشيك */
+    }
+
+    .top_slide::after {
+        left: 50%;
+        transform: translateX(-50%); /* سنترة الخط اللي تحت العنوان */
+    }
+
+    .product {
+        width: 190px; /* حجم مناسب جداً لعرض الموبايل */
+        padding: 12px 8px;
+    }
+
+    .product .img_product {
+        height: 130px;
+        margin-bottom: 15px;
+    }
+
+    .product .name_product {
+        font-size: 14px; /* تصغير الخط عشان مياخدش مساحة */
+    }
+
+    .product .price {
+        font-size: 17px;
+    }
+
+    /* في الموبايل الأيكونز تظهر دايماً أو بلمسة بسيطة */
+    .product .icons {
+        right: 10px; /* تظهر جوه الكارت مش مستخبية */
+        transform: translateY(-50%) scale(0.9);
+    }
+    
+    .product .icons span {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+/* الموبايل الصغير جداً (أقل من 480px) */
+@media (max-width: 480px) {
+    .product {
+        width: 165px; /* يخلي كارتين يظهروا جنب بعض تقريباً */
+    }
+    
+    .top_slide p {
+        font-size: 13px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+}
+
+/* تحسين السكتيلون (Loading) للموبايل */
+@media (max-width: 768px) {
+    .loading_slide_products .top_slide h2 { width: 180px; }
+    .loading_slide_products .top_slide p { width: 250px; }
+    .products_loading { gap: 15px; overflow-x: hidden; }
+}

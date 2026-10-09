@@ -1,0 +1,263 @@
+:root{
+    --main-color: #0090f0;
+    --p-color: #7b7b7b;
+    --bg-color: #F3F3F3;
+    --white-color: #fff;
+    --color-heading: #253237;
+    --border-color: #d6d6d6d5;
+
+}
+
+.item_details{
+    padding: 50px 0;
+
+}
+
+.item_details .container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.item_details .imgs_items{
+    width: 40%;
+}
+
+.item_details .imgs_items .big_img{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.item_details .imgs_items .big_img img{
+    max-width: 450px;
+    width: auto;
+    
+}
+
+
+
+.item_details .imgs_items .sm_img{
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+}
+
+.item_details .imgs_items .sm_img .img_div_sm{
+    width: 24%;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.item_details .imgs_items .sm_img img{
+    width: auto;
+    max-height: 150px;
+    object-fit: cover;
+
+}
+
+.item_details .details_item{
+    width: 58%;
+}
+
+.item_details .details_item .name{
+    margin-bottom: 30px;
+    color: var(--main-color);
+}
+
+.item_details .details_item .stars{
+    margin: 15px 0;
+    display: flex;
+    gap: 5px;
+}
+
+.item_details .details_item .stars svg{
+    fill: #f8d941;
+    font-size: 20px;
+}
+
+.item_details .details_item .price{
+    font-size: 22px;
+    margin: 20px 0;
+
+}
+
+.item_details .details_item h5{
+    font-weight: 500;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.item_details .details_item .desc{
+    line-height: 1.5;
+}
+
+.item_details .details_item .stock{
+    font-size: 20px;
+    margin-top: 20px;
+}
+
+.item_details .details_item .btn{
+    font-size: 16px;
+    border-radius: 2px;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    transition: 0.3s ease-in-out;
+}
+
+.item_details .details_item .btn.in-cart{
+    background: transparent;
+    color: var(--main-color);
+    pointer-events: none;
+}
+
+.item_details .details_item .btn svg{
+    font-size: 20px;
+}
+
+.item_details .details_item .icons{
+    display: flex;
+    gap: 10px;
+    transition: 0.3s;
+    margin: 20px 0;
+}
+
+
+.item_details .details_item .icons span{
+    width: 40px;
+    height: 40px;
+    background: var(--bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.item_details .details_item .icons span:hover{
+    background: var(--main-color);
+}
+
+.item_details .details_item .icons svg:hover{
+    fill: var(--white-color);
+    transition: 0.3s;
+}
+
+
+.loading_items .item_details .imgs_items{
+    height: 600px;
+}
+
+.loading_items .item_details .details_item{
+    height: 600px;
+    padding-top: 100px;
+}
+
+.loading_items .item_details .details_item h5{
+    margin-bottom: 50px;
+    height: 30px;
+}
+
+
+.item_details .details_item .icons span.in-fav{
+    background: var(--main-color);
+}
+
+.item_details .details_item .icons span.in-fav svg{
+    fill: var(--white-color);
+}
+
+
+/* Responsive */
+/* --- Product Details Responsive --- */
+
+/* الشاشات المتوسطة (التابلت) */
+@media (max-width: 992px) {
+    .item_details .container {
+        flex-direction: column; /* تحويل العناصر تحت بعض */
+        align-items: flex-start;
+        gap: 40px;
+    }
+
+    .item_details .imgs_items, 
+    .item_details .details_item {
+        width: 100%; /* المكونات تاخد العرض كامل */
+    }
+
+    .item_details .imgs_items .big_img img {
+        max-width: 100%; /* الصورة الكبيرة تملأ المساحة */
+        margin: 0 auto;
+    }
+}
+
+/* الموبايل (أقل من 768px) */
+@media (max-width: 768px) {
+    .item_details {
+        padding: 20px 0;
+    }
+
+    .item_details .details_item .name {
+        font-size: 24px; /* تصغير العنوان قليلاً */
+        margin-bottom: 15px;
+    }
+
+    .item_details .imgs_items .big_img {
+        justify-content: center;
+    }
+
+    .item_details .imgs_items .big_img img {
+        max-height: 350px; /* تحديد طول مناسب في الموبايل */
+        object-fit: contain;
+    }
+
+    .item_details .imgs_items .sm_img img {
+        max-height: 100px; /* تصغير الصور المصغرة */
+    }
+
+    .item_details .details_item .price {
+        font-size: 20px;
+        margin: 10px 0;
+    }
+
+    /* جعل زرار "أضف للسلة" يملأ العرض لسهولة الضغط */
+    .item_details .details_item .btn {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        padding: 15px;
+        font-size: 18px;
+    }
+}
+
+/* الموبايل الصغير جداً (أقل من 480px) */
+@media (max-width: 480px) {
+    .item_details .imgs_items .big_img img {
+        max-height: 280px;
+    }
+
+    .item_details .details_item h5 {
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+    .item_details .details_item .desc {
+        font-size: 14px;
+    }
+}
+
+/* تحسين السكتيلون (Loading) في الموبايل */
+@media (max-width: 992px) {
+    .loading_items .item_details .imgs_items {
+        height: 350px;
+        margin-bottom: 20px;
+    }
+    .loading_items .item_details .details_item {
+        height: auto;
+        padding-top: 20px;
+    }
+}
