@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using E_commerce.Domain.Contracts;
 using E_commerce.Domain.Entities.BasketModule;
 using E_commerce.Domain.Entities.OrderModule;
@@ -69,7 +69,8 @@ namespace E_commerce.Services
                 {
                     Amount = BasketAmount,
                     Currency = "USD",
-                    PaymentMethodTypes = ["card"]
+                    // Stripe decides which payment methods to offer (cards are always included).
+                    AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions { Enabled = true }
                 };
                 var PaymentIntent = await PaymentService.CreateAsync(options);
                 Basket.PaymentIntentId = PaymentIntent.Id;

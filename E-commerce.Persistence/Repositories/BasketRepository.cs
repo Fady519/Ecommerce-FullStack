@@ -1,4 +1,4 @@
-﻿using E_commerce.Domain.Contracts;
+using E_commerce.Domain.Contracts;
 using E_commerce.Domain.Entities.BasketModule;
 using StackExchange.Redis;
 using System;
@@ -53,7 +53,7 @@ namespace E_commerce.Persistence.Repositories
             }
             else
             {
-                return JsonSerializer.Deserialize<CustomerBasket>(Basket!);
+                return JsonSerializer.Deserialize<CustomerBasket>(Basket.ToString());
             }
         }
     }
