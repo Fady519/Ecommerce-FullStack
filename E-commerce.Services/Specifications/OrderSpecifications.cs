@@ -1,4 +1,4 @@
-﻿using E_commerce.Domain.Entites.OederModule;
+﻿using E_commerce.Domain.Entities.OrderModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;

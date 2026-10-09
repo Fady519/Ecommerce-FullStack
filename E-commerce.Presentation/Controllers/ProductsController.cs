@@ -26,7 +26,7 @@ namespace E_commerce.Presentation.Controllers
         [Authorize]
         [HttpGet]
         [RedisCache]
-        public async Task<ActionResult<PaginatedResult<ProductDTOs>>> GetAllProducts([FromQuery] ProductQueryParams queryParams)
+        public async Task<ActionResult<PaginatedResult<ProductDTO>>> GetAllProducts([FromQuery] ProductQueryParams queryParams)
         {
             var Products = await _productService.GetAllProductsAsync(queryParams);
             return Ok(Products);
@@ -35,11 +35,11 @@ namespace E_commerce.Presentation.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductDTOs>> GetProduct(int id)
+        public async Task<ActionResult<ProductDTO>> GetProduct(int id)
         {
             // throw new Exception();
             var Result = await _productService.GetProductByIdAsync(id);
-            return HandleResult<ProductDTOs>(Result);
+            return HandleResult<ProductDTO>(Result);
 
         }
 

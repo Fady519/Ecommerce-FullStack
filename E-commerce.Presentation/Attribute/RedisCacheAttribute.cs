@@ -1,4 +1,4 @@
-﻿using E_commerce.ServicesAbstraction;
+using E_commerce.ServicesAbstraction;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -44,7 +44,7 @@ namespace E_commerce.Presentation.Attribute
             }
 
             var ExecutedContext = await next.Invoke();
-            if(ExecutedContext.Result is OkObjectResult result)
+            if(ExecutedContext.Result is OkObjectResult { Value: not null } result)
             {
                 await cacheService.SetAsync(cacheKey, result.Value, TimeSpan.FromMinutes(_durationMin));
 

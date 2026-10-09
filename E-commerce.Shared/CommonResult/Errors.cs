@@ -1,4 +1,4 @@
-﻿namespace E_Commerce.Web.CommonResult
+﻿namespace E_commerce.Shared.CommonResult
 {
     public class Errors
     {
@@ -43,7 +43,7 @@
             return new Errors(Code, Description, ErrorType.forbidden);
         }
 
-        public static Errors InvalidCredentails(string Code = "General.InvalidCredentials", string Description = "A General Has Occurred")
+        public static Errors InvalidCredentials(string Code = "General.InvalidCredentials", string Description = "A General Has Occurred")
         {
             return new Errors(Code, Description, ErrorType.InvalidCredentials);
         }

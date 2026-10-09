@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,4 +17,7 @@ namespace E_commerce.Services.Exceptions
 
 
     public sealed class BasketNotFoundException(string id) : NotFoundException($"Basket With Id {id} Not Found");
+
+    public sealed class DeliveryMethodNotFoundException(int? id) : NotFoundException(
+        id is null ? "Choose a delivery method before paying." : $"Delivery method {id} was not found.");
 }
