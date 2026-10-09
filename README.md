@@ -43,7 +43,7 @@ Every layer clean. Every endpoint secured. Every response standardized.
 |---|---|
 | 🏗️ **Onion Architecture** | Domain → Application → Persistence — zero cross-layer leakage |
 | 🗃️ **Generic Repository + Specification Pattern** | ~40% less code duplication across all data-access modules |
-| ⚡ **Redis Distributed Caching** | Eliminates redundant DB round-trips on high-frequency catalog queries |
+| ⚡ **Output Caching** | Catalog responses cached in memory (per query string) — no Redis server needed |
 | 🔐 **JWT Bearer Auth** | Stateless authentication with ASP.NET Identity and claims-based RBAC |
 | 💳 **Stripe Integration** | Full payment lifecycle — intent creation, confirmation, webhook handling |
 | 🛡️ **Custom Middleware** | Centralized exception handling + standardized API response envelope |
@@ -81,6 +81,102 @@ Every layer clean. Every endpoint secured. Every response standardized.
 
 ---
 
+## 🗄️ Database
+
+One SQL Server database (`ECommerceStore`) holds everything: users & roles (ASP.NET Identity), the catalog, baskets and orders.
+Baskets used to live in Redis and users in a second database; now every relationship is a real foreign key.
+
+```mermaid
+erDiagram
+    Users ||--o| Addresses : "saved address"
+    Users ||--o{ UserRoles : has
+    Roles ||--o{ UserRoles : "Admin / Customer"
+    Users ||--o{ Orders : places
+    Users |o--o{ Baskets : "owns (optional, guests have none)"
+
+    ProductBrands ||--o{ Products : brand
+    ProductTypes ||--o{ Products : type
+
+    Baskets ||--o{ BasketItems : contains
+    Products ||--o{ BasketItems : "in basket"
+    DeliveryMethods |o--o{ Baskets : "chosen at checkout"
+
+    Orders ||--|{ OrderItems : contains
+    DeliveryMethods ||--o{ Orders : "ships with"
+
+    Users {
+        string Id PK
+        string DisplayName
+        string Email
+        datetimeoffset CreatedAt
+    }
+    Addresses {
+        int Id PK
+        string UserId FK
+        string FirstName
+        string LastName
+        string Street
+        string City
+        string Country
+    }
+    Products {
+        int ID PK
+        string Name
+        decimal Price "CHECK >= 0"
+        int Stock "CHECK >= 0"
+        string PictureUrl
+        int BrandId FK
+        int TypeId FK
+    }
+    Baskets {
+        string ID PK "created by the browser"
+        string UserId FK "nullable"
+        int DeliveryMethodId FK "nullable"
+        string PaymentIntentId
+        datetimeoffset UpdatedAt
+    }
+    BasketItems {
+        int ID PK
+        string BasketId FK
+        int ProductId FK
+        int Quantity "CHECK 1..100"
+    }
+    Orders {
+        guid ID PK
+        string UserId FK
+        string UserEmail "snapshot"
+        datetimeoffset OrderDate
+        string Status "Pending, PaymentReceived, Shipped, Delivered..."
+        string PaymentMethod "Card / CashOnDelivery"
+        string Address_City "address copied into the order"
+        decimal SubTotal
+        int DeliveryMethodId FK
+    }
+    OrderItems {
+        int ID PK
+        guid OrderId FK
+        int ProductId "snapshot, no FK"
+        string ProductName "snapshot"
+        decimal Price "price paid"
+        int Quantity
+    }
+    DeliveryMethods {
+        int ID PK
+        string ShortName
+        string DeliveryTime
+        decimal Price
+    }
+```
+
+**Design choices**
+- **Prices are never stored in the basket** — they are read from `Products`, so a client can't send a cheaper price.
+- **Orders keep snapshots** (product name, price paid, address, email): editing a product or an address later doesn't rewrite order history. That's why `OrderItems.ProductId` has no foreign key.
+- **Deleting is safe**: removing a user or a delivery method that has orders is refused (`Restrict`); basket lines are removed with their basket (`Cascade`).
+- **Readable data**: order status and payment method are stored as text (`"Delivered"`, not `3`), and Identity tables have short names (`Users`, `Roles`).
+- **Seeding**: the catalog (13 products, 6 brands, 4 types, 4 delivery methods in EGP) is seeded on first start from JSON files embedded in the dll. `--seed-demo` adds 30 customers and ~3 months of orders (see below).
+
+---
+
 ## 🛠️ Tech Stack
 
 <div align="center">
@@ -89,10 +185,8 @@ Every layer clean. Every endpoint secured. Every response standardized.
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core%20Web%20API-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
 ![EF Core](https://img.shields.io/badge/EF%20Core-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
 ![SQL Server](https://img.shields.io/badge/SQL%20Server-CC2927?style=for-the-badge&logo=microsoftsqlserver&logoColor=white)
-![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
 ![Stripe](https://img.shields.io/badge/Stripe-635BFF?style=for-the-badge&logo=stripe&logoColor=white)
-![AutoMapper](https://img.shields.io/badge/AutoMapper-BE0000?style=for-the-badge)
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
 
 **Patterns & Architecture**
@@ -143,10 +237,9 @@ Every layer clean. Every endpoint secured. Every response standardized.
 
 ### Prerequisites
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download)
-- SQL Server
-- Redis Server (or [Upstash](https://upstash.com) free tier)
-- Stripe Account
+- [.NET 10 SDK](https://dotnet.microsoft.com/download)
+- SQL Server (LocalDB / Express / Developer) — no Redis needed anymore
+- A Stripe account in **test mode** (only for card payments)
 
 ### Installation
 
@@ -155,29 +248,21 @@ Every layer clean. Every endpoint secured. Every response standardized.
 git clone https://github.com/Fady519/E_CommerceSolution.git
 cd E_CommerceSolution
 
-# 2. Configure appsettings.json
-"ConnectionStrings": {
-  "DefaultConnection": "Your SQL Server Connection String",
-  "Redis": "localhost:6379"
-},
-"JWT": {
-  "SecretKey": "your-secret-key",
-  "Issuer":    "YourApp",
-  "Audience":  "YourApp"
-},
-"StripeSettings": {
-  "PublishableKey": "pk_test_...",
-  "SecretKey":      "sk_test_..."
-}
+# 2. Secrets (never in appsettings.json) — stored outside the repo with user-secrets
+dotnet user-secrets set "JWTOptions:SecretKey" "<a long random string, 32+ characters>" --project E-Commerce.Web
+dotnet user-secrets set "Stripe:SecretKey"     "sk_test_..."                          --project E-Commerce.Web
+dotnet user-secrets set "AdminUser:Password"   "<password for the admin account>"     --project E-Commerce.Web
+dotnet user-secrets set "DemoData:Password"    "<password for the demo logins>"       --project E-Commerce.Web
 
-# 3. Apply migrations
-dotnet ef database update
+# 3. Run — in Development the database (ECommerceStore on Server=.) is created, migrated and seeded automatically
+dotnet run --project E-Commerce.Web --launch-profile http
 
-# 4. Run
-dotnet run
+# 4. (optional) Demo data: 30 customers + ~3 months of orders
+dotnet run --project E-Commerce.Web --launch-profile http -- --seed-demo
 ```
 
-Navigate to `https://localhost:{port}/swagger` to explore all endpoints.
+Swagger: `http://localhost:5163/swagger`. Demo logins: `customer@demo.store` and `admin@demo.store` (password = `DemoData:Password`).
+The connection string lives in `E-Commerce.Web/appsettings.Development.json` (change `Server=.` if your SQL Server instance has another name).
 
 ---
 
