@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +18,8 @@ namespace E_commerce.Shared.DTOs.ProductDTOs
         public string PictureUrl { get; set; } = default!;
 
         public decimal Price { get; set; }
+        /// <summary>Pieces left (0 = out of stock).</summary>
+        public int Stock { get; set; }
 
         public string ProductType { get; set; } = default!;
 

@@ -4,9 +4,8 @@ using E_commerce.Domain.Contracts;
 using E_commerce.Domain.Entities.IdentityModule;
 using E_commerce.Persistence.Data.DataSeed;
 using E_commerce.Persistence.Data.DbContexts;
-using E_commerce.Persistence.IdentityData;
-using E_commerce.Persistence.IdentityData.DataSeed;
 using E_commerce.Persistence.Repositories;
+using E_commerce.Presentation.Controllers;
 using E_commerce.Services;
 using E_commerce.Services.Mapping;
 using E_commerce.ServicesAbstraction;
@@ -18,7 +17,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using StackExchange.Redis;
 
 namespace E_Commerce.Web.Extensions
 {
@@ -28,22 +26,19 @@ namespace E_Commerce.Web.Extensions
         /// <summary>Name of the CORS policy that lets the React storefront call the API.</summary>
         public const string FrontendCorsPolicy = "Frontend";
 
-        /// <summary>DbContexts, repositories, Redis and the seeders.</summary>
+        /// <summary>The database (one DbContext for everything), repositories and the seeders.</summary>
         public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<StoreDbContext>(options =>
                 options.UseSqlServer(RequiredConnectionString(configuration, "DefaultConnection")));
-            services.AddDbContext<StoreIdentityDbContext>(options =>
-                options.UseSqlServer(RequiredConnectionString(configuration, "IdentityConnection")));
 
             services.AddKeyedScoped<IDataInitializer, DataInitializer>("Default");
             services.AddKeyedScoped<IDataInitializer, IdentityDataInitializer>("Identity");
+            services.Configure<AdminUserOptions>(configuration.GetSection(AdminUserOptions.SectionName));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            services.AddSingleton<IConnectionMultiplexer>(_ =>
-                ConnectionMultiplexer.Connect(RequiredConnectionString(configuration, "RedisConnection")));
+            // Baskets now live in SQL Server too (they used to need a Redis server).
             services.AddScoped<IBasketRepository, BasketRepository>();
-            services.AddScoped<ICacheRepository, CacheRepository>();
 
             return services;
         }
@@ -56,7 +51,6 @@ namespace E_Commerce.Web.Extensions
 
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IBasketService, BasketService>();
-            services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IPaymentService, PaymentService>();
@@ -69,7 +63,7 @@ namespace E_Commerce.Web.Extensions
         {
             services.AddIdentityCore<ApplicationUser>()
                 .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<StoreIdentityDbContext>();
+                .AddEntityFrameworkStores<StoreDbContext>();
 
             // The signing key is a secret: it lives in user-secrets (local) or environment variables (server),
             // never in appsettings.json. A short key would make tokens easy to forge, so we refuse to start.
@@ -112,6 +106,14 @@ namespace E_Commerce.Web.Extensions
                 options.CustomizeProblemDetails = context =>
                     context.ProblemDetails.Instance ??= $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}");
             services.AddExceptionHandler<GlobalExceptionHandler>();
+
+            // Catalog responses are kept in memory for 5 minutes (one copy per query string: page, sort, brand...).
+            // The "catalog" tag lets the admin endpoints clear them as soon as a product changes.
+            services.AddOutputCache(options =>
+                options.AddPolicy(ProductsController.CatalogCachePolicy, policy => policy
+                    .Expire(TimeSpan.FromMinutes(5))
+                    .SetVaryByQuery("*")
+                    .Tag("catalog")));
 
             // Browsers block calls from another origin (the React app) unless the API allows them.
             // Origins come from "Cors:AllowedOrigins" so the live site can be added without code changes.

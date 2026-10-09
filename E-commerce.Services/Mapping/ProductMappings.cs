@@ -21,6 +21,7 @@ namespace E_commerce.Services.Mapping
             Description = product.Description,
             PictureUrl = pictures.Build(product.PictureUrl),
             Price = product.Price,
+            Stock = product.Stock,
             ProductBrand = product.ProductBrand?.Name ?? string.Empty,
             ProductType = product.ProductType?.Name ?? string.Empty,
         };

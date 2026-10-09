@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +19,9 @@ namespace E_commerce.Domain.Entities.ProductModule
 
 
         public decimal Price { get; set; }
+
+        /// <summary>How many pieces are left. Orders reduce it; it can never go below zero (database check).</summary>
+        public int Stock { get; set; }
 
         
         #region Relationships

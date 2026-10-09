@@ -1,50 +1,42 @@
-using E_commerce.Services.Mapping;
 using E_commerce.Domain.Contracts;
-using E_commerce.Domain.Entities.BasketModule;
+using E_commerce.Domain.Entities.OrderModule;
+using E_commerce.Domain.Entities.ProductModule;
 using E_commerce.Services.Exceptions;
+using E_commerce.Services.Mapping;
 using E_commerce.ServicesAbstraction;
 using E_commerce.Shared.DTOs.BasketDTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E_commerce.Services
 {
-
-    public class BasketService : IBasketService
+    public class BasketService(IBasketRepository basketRepository, IUnitOfWork unitOfWork, IPictureUrlBuilder pictures) : IBasketService
     {
-        private readonly IBasketRepository _basketRepository;
-
-        public BasketService(IBasketRepository basketRepository) 
-        {
-            _basketRepository = basketRepository;
-        }
-
         public async Task<BasketDTO> CreateOrUpdateBasketAsync(BasketDTO basket)
         {
-            var CreatedOrUpdatedBasket = await _basketRepository.CreateOrUpdateBasketAsync(basket.ToEntity())
-                ?? throw new BasketNotFoundException(basket.Id);
-            return CreatedOrUpdatedBasket.ToDto();
+            var entity = basket.ToEntity();
+
+            // Every product must really exist (a foreign key would refuse it anyway, but with an ugly 500 error).
+            var products = unitOfWork.GetRepository<Product, int>();
+            foreach (var item in entity.Items)
+            {
+                _ = await products.GetById(item.ProductId) ?? throw new ProductNotFoundException(item.ProductId);
+            }
+
+            if (entity.DeliveryMethodId is int deliveryMethodId)
+            {
+                _ = await unitOfWork.GetRepository<DeliveryMethod, int>().GetById(deliveryMethodId)
+                    ?? throw new DeliveryMethodNotFoundException(deliveryMethodId);
+            }
+
+            var saved = await basketRepository.CreateOrUpdateBasketAsync(entity);
+            return saved.ToDto(pictures);
         }
 
-        public async Task<bool> DeleteBasketAsync(string id)
-        {
-            return await _basketRepository.DeleteBasketAsync(id);
-        }
+        public Task<bool> DeleteBasketAsync(string id) => basketRepository.DeleteBasketAsync(id);
 
         public async Task<BasketDTO> GetBasketAsync(string id)
         {
-            var Basket = await _basketRepository.GetBasketAsync(id);
-
-            if(Basket == null) 
-                throw new BasketNotFoundException(id);
-
-            return Basket.ToDto();
+            var basket = await basketRepository.GetBasketAsync(id) ?? throw new BasketNotFoundException(id);
+            return basket.ToDto(pictures);
         }
-
-
-
     }
 }

@@ -20,12 +20,15 @@ namespace E_commerce.Services
         private readonly IBasketRepository basketRepository;
         private readonly IUnitOfWork unitOfWork;
         private readonly IConfiguration configuration;
+        private readonly IPictureUrlBuilder pictures;
 
-        public PaymentService(IBasketRepository basketRepository , IUnitOfWork unitOfWork , IConfiguration configuration)
+        public PaymentService(IBasketRepository basketRepository , IUnitOfWork unitOfWork , IConfiguration configuration,
+            IPictureUrlBuilder pictures)
         {
             this.basketRepository = basketRepository;
             this.unitOfWork = unitOfWork;
             this.configuration = configuration;
+            this.pictures = pictures;
         }
 
         public async Task<BasketDTO> CreateOrUpdatePaymentIntentAsync(string BasketId)
@@ -43,15 +46,8 @@ namespace E_commerce.Services
             {
                 throw new BasketNotFoundException(BasketId);
             }
-            // 3 ) Amount
-            var Product = unitOfWork.GetRepository<Domain.Entities.ProductModule.Product, int>();
-            foreach(var item in Basket.Items)
-            {
-                var product = await Product.GetById(item.Id) ?? throw new ProductNotFoundException(item.Id);
-                item.Price = product.Price;
-            }
 
-            // DeliverMethod
+            // 3 ) Amount — always from the catalog price (the basket is loaded with its products), never from the client.
 
             // A delivery method must be chosen before paying: its price is part of the amount.
             if (Basket.DeliveryMethodId is not int deliveryMethodId)
@@ -59,9 +55,11 @@ namespace E_commerce.Services
             var DeliveryMethod = await unitOfWork.GetRepository<DeliveryMethod, int>().GetById(deliveryMethodId)
                 ?? throw new DeliveryMethodNotFoundException(deliveryMethodId);
 
-            Basket.ShippingPrice = DeliveryMethod.Price;
+            var total = Basket.Items.Sum(item => item.Quantity * item.Product.Price) + DeliveryMethod.Price;
 
-            var BasketAmount = (long) (Basket.Items.Sum(item => item.Quantity * item.Price) + DeliveryMethod.Price) * 100;
+            // Stripe wants the smallest unit (piastres): 120.50 EGP → 12050.
+            // The old code cast to long BEFORE multiplying, so 120.50 became 12000 (the .50 was lost).
+            var BasketAmount = (long)Math.Round(total * 100, MidpointRounding.AwayFromZero);
 
             // 4 ) Create PaymentIntent
             var PaymentService = new PaymentIntentService();
@@ -70,7 +68,7 @@ namespace E_commerce.Services
                 var options = new PaymentIntentCreateOptions()
                 {
                     Amount = BasketAmount,
-                    Currency = "USD",
+                    Currency = "egp", // product prices are in Egyptian pounds
                     // Stripe decides which payment methods to offer (cards are always included).
                     AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions { Enabled = true }
                 };
@@ -89,8 +87,8 @@ namespace E_commerce.Services
 
             }
 
-            await basketRepository.CreateOrUpdateBasketAsync(Basket);
-            return Basket.ToDto();
+            var saved = await basketRepository.CreateOrUpdateBasketAsync(Basket);
+            return saved.ToDto(pictures);
 
         }
     }

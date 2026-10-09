@@ -28,17 +28,20 @@ namespace E_commerce.Services
 
         public IUnitOfWork UnitOfWork { get; }
 
-        public async Task<Result<OrderToReturnDTO>> CreateOrderAsync(OrderDTO orderDTO, string Email)
+        public async Task<Result<OrderToReturnDTO>> CreateOrderAsync(OrderDTO orderDTO, string userId, string email)
         {
             
             var OrderAddress = orderDTO.AddressDTO.ToEntity();
 
             var Basket = await _basketRepository.GetBasketAsync(orderDTO.BasketId);
             if (Basket == null) return Errors.NotFound("Basket.NotFound", $"the basket with id : {orderDTO.BasketId} is null");
+            if (Basket.Items.Count == 0) return Errors.Validation("Basket.Empty", "The basket is empty.");
 
 
-            // Payment
-            ArgumentNullException.ThrowIfNullOrEmpty(Basket.PaymentIntentId);
+            // Payment: a card order needs its Stripe payment intent first (POST api/Payment/{basketId}).
+            // (Cash on delivery comes in a later phase.) A 400 tells the client what to do; the old code threw a 500.
+            if (string.IsNullOrEmpty(Basket.PaymentIntentId))
+                return Errors.Validation("Order.PaymentRequired", "Create the payment first: POST api/Payment/{basketId}.");
 
             var OrderRepo = UnitOfWork.GetRepository<Order, Guid>();
 
@@ -50,31 +53,27 @@ namespace E_commerce.Services
             }
 
 
-            List<OrderItem> OrderItems = new List<OrderItem>();
-            foreach (var item in Basket.Items)
-            {
-                var product = await UnitOfWork.GetRepository<Product, int>().GetById(item.Id);
-                if (product == null) return Errors.NotFound("Product.NotFound", $"the product with id {item.Id} is null");
-
-                OrderItems.Add(CreateOrderItem(item, product));
-            }
+            // The basket was loaded with its products, so names and prices come straight from the catalog.
+            List<OrderItem> OrderItems = Basket.Items.Select(item => CreateOrderItem(item, item.Product)).ToList();
 
             var DeliveryMethod = await UnitOfWork.GetRepository<DeliveryMethod , int>().GetById(orderDTO.DeliveryMethodId);
-            if (DeliveryMethod == null) return Errors.NotFound("DeliveryMethod.NotFound", $"the product with id {orderDTO.DeliveryMethodId} is not Found");
+            if (DeliveryMethod == null) return Errors.NotFound("DeliveryMethod.NotFound", $"the delivery method with id {orderDTO.DeliveryMethodId} is not Found");
 
             var SubTotal = OrderItems.Sum(I => I.Price * I.Quantity);
 
             var Order = new Order()
             {
+                UserId = userId,
+                UserEmail = email,
                 Address = OrderAddress,
                 DeliveryMethod = DeliveryMethod,
                 Items = OrderItems,
                 SubTotal = SubTotal,
-                UserEmail = Email,
+                PaymentMethod = PaymentMethod.Card,
                 PaymentIntentId = Basket.PaymentIntentId
             };
 
-            await UnitOfWork.GetRepository<Order , Guid>().AddAsync(Order);
+            await OrderRepo.AddAsync(Order);
 
             int Result =  await UnitOfWork.SaveChangesAsync();
             if (Result == 0) return Errors.Failure("Order.Failure", "Order Cannot Be Created");
@@ -84,15 +83,13 @@ namespace E_commerce.Services
         }
 
 
-        public async Task<Result<IEnumerable<OrderToReturnDTO>>> GetAllOrdersAsync(string Email)
+        public async Task<Result<IEnumerable<OrderToReturnDTO>>> GetAllOrdersAsync(string userId)
         {
             
-            var Spec = new OrderSpecifications(Email);
+            var Spec = new OrderSpecifications(userId);
             var Orders = await UnitOfWork.GetRepository<Order , Guid>().GetAllAsync(Spec);
 
-            if (!Orders.Any())
-                return Errors.NotFound("Order Not Found");
-
+            // A new customer simply has no orders yet: that's an empty list (200), not an error (404).
             var Data = Orders.Select(o => o.ToDto(_pictures)).ToList();
             return Result<IEnumerable<OrderToReturnDTO>>.Ok(Data);
             
@@ -113,9 +110,9 @@ namespace E_commerce.Services
             return Result<IEnumerable<DeliveryMethodDTO>>.Ok(data);
         }
 
-        public async Task<Result<OrderToReturnDTO>> GetOrderByIdAsync(Guid id, string Email)
+        public async Task<Result<OrderToReturnDTO>> GetOrderByIdAsync(Guid id, string userId)
         {
-            var Spec = new OrderSpecifications(id, Email);
+            var Spec = new OrderSpecifications(id, userId);
             // GetById (one order), not GetAllAsync (a list): a list can never be null, so "not found" was never reported.
             var Order = await UnitOfWork.GetRepository<Order, Guid>().GetById(Spec);
 

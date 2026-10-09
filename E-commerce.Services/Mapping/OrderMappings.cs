@@ -37,8 +37,8 @@ namespace E_commerce.Services.Mapping
             order.Items.Select(i => i.ToDto(pictures)).ToList(),
             order.Address.ToDto(),
             order.DeliveryMethod.ShortName,
-            order.OrderStatus.ToString(),
-            order.OrderData,
+            order.Status.ToString(),
+            order.OrderDate,
             order.SubTotal,
             order.GetTotal());
     }

@@ -1,28 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using E_commerce.Domain.Entities.ProductModule;
 
 namespace E_commerce.Domain.Entities.BasketModule
 {
-    public class BasketItem
+    /// <summary>One line of a basket: which product, and how many.</summary>
+    public class BasketItem : BaseEntity<int>
     {
+        public string BasketId { get; set; } = default!;
+        public CustomerBasket Basket { get; set; } = default!;
 
-        public int Id { get; set; }
-
-        public string ProductName { get; set; } = default!;
-
-        public string PictureUrl { get; set; } = default!;
-
-        public decimal Price { get; set; }
+        public int ProductId { get; set; }
+        public Product Product { get; set; } = default!;
 
         public int Quantity { get; set; }
-
-
-
-
-
-
     }
 }
