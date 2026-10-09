@@ -1,4 +1,4 @@
-﻿using E_commerce.Domain.Entites.BasketModule;
+﻿using E_commerce.Domain.Entities.BasketModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ namespace E_commerce.Domain.Contracts
       
         Task<CustomerBasket?> CreateOrUpdateBasketAsync(CustomerBasket basket , TimeSpan timeToLive = default);
 
-        Task<bool> DeleteBasketAsync(string baskitId);
+        Task<bool> DeleteBasketAsync(string basketId);
 
 
     }

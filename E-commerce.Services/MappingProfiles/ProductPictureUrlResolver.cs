@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using E_commerce.Domain.Entites.ProductModule;
+using E_commerce.Domain.Entities.ProductModule;
 using E_commerce.Shared.DTOs.ProductDTOs;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace E_commerce.Services.MappingProfiles
 {
-    public class ProductPictureUrlResolver : IValueResolver<Product, ProductDTOs, string>
+    public class ProductPictureUrlResolver : IValueResolver<Product, ProductDTO, string>
     {
         private readonly IConfiguration _configuration;
 
@@ -20,7 +20,7 @@ namespace E_commerce.Services.MappingProfiles
         }
 
 
-        public string Resolve(Product source, ProductDTOs destination, string destMember, ResolutionContext context)
+        public string Resolve(Product source, ProductDTO destination, string destMember, ResolutionContext context)
         {
             
             if(string.IsNullOrEmpty(source.PictureUrl))

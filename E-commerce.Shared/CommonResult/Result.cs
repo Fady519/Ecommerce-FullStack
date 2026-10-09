@@ -1,4 +1,4 @@
-﻿namespace E_Commerce.Web.CommonResult
+﻿namespace E_commerce.Shared.CommonResult
 {
     public class Result
     {

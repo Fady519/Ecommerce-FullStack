@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using E_commerce.Domain.Contracts;
-using E_commerce.Domain.Entites.BasketModule;
-using E_commerce.Domain.Entites.OederModule;
+using E_commerce.Domain.Entities.BasketModule;
+using E_commerce.Domain.Entities.OrderModule;
 using E_commerce.Services.Exceptions;
 using E_commerce.ServicesAbstraction;
 using E_commerce.Shared.DTOs.BasketDTOs;
@@ -46,7 +46,7 @@ namespace E_commerce.Services
                 throw new BasketNotFoundException(BasketId);
             }
             // 3 ) Amount
-            var Product = unitOfWork.GetRepository<Domain.Entites.ProductModule.Product, int>();
+            var Product = unitOfWork.GetRepository<Domain.Entities.ProductModule.Product, int>();
             foreach(var item in Basket.Items)
             {
                 var product = await Product.GetById(item.Id) ?? throw new ProductNotFoundException(item.Id);

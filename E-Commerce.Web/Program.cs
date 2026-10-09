@@ -1,6 +1,6 @@
-
+﻿
 using E_commerce.Domain.Contracts;
-using E_commerce.Domain.Entites.IdentityModule;
+using E_commerce.Domain.Entities.IdentityModule;
 using E_commerce.Persistence.Data.DataSeed;
 using E_commerce.Persistence.Data.DbContexts;
 using E_commerce.Persistence.IdentityData;
@@ -44,8 +44,8 @@ namespace E_Commerce.Web
             });
 
 
-            builder.Services.AddKeyedScoped<IDataInitalizer, DataInitalizer>("Default");
-            builder.Services.AddKeyedScoped<IDataInitalizer, IdentityDataInitalizer>("Identity");
+            builder.Services.AddKeyedScoped<IDataInitializer, DataInitializer>("Default");
+            builder.Services.AddKeyedScoped<IDataInitializer, IdentityDataInitializer>("Identity");
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -75,7 +75,7 @@ namespace E_Commerce.Web
                 options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
             });
 
-            builder.Services.AddIdentityCore<ApplicationUset>()
+            builder.Services.AddIdentityCore<ApplicationUser>()
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<StoreIdentityDbContext>();
 
@@ -124,7 +124,7 @@ namespace E_Commerce.Web
             #region Configure the HTTP request pipeline.
 
 
-            app.UseMiddleware<ExteptionHandlerMiddleware>();
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 
             if (app.Environment.IsDevelopment())

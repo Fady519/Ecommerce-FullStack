@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using E_commerce.Domain.Entites.OederModule;
+using E_commerce.Domain.Entities.OrderModule;
 using E_commerce.Shared.DTOs.OrderDTOs;
 using System;
 using System.Collections.Generic;
@@ -22,7 +22,7 @@ namespace E_commerce.Services.MappingProfiles
 
             CreateMap<OrderItem, OrderItemDTO>()
                 .ForMember(D => D.ProductName , O => O.MapFrom(S => S.Product.ProductName))
-                .ForMember(D => D.PictureUrl, O => O.MapFrom<OrderItenPictureUrlResolver>());
+                .ForMember(D => D.PictureUrl, O => O.MapFrom<OrderItemPictureUrlResolver>());
 
 
             //

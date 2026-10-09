@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using E_commerce.Domain.Entites.BasketModule;
+using E_commerce.Domain.Entities.BasketModule;
 using E_commerce.Shared.DTOs.BasketDTOs;
 using System;
 using System.Collections.Generic;
@@ -17,7 +17,7 @@ namespace E_commerce.Services.MappingProfiles
 
             CreateMap<CustomerBasket, BasketDTO>().ReverseMap();
 
-            CreateMap<BasketItems, BasketItemDto>().ReverseMap();
+            CreateMap<BasketItem, BasketItemDto>().ReverseMap();
 
         }
 

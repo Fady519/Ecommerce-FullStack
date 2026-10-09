@@ -1,4 +1,4 @@
-﻿using E_Commerce.Web.CommonResult;
+﻿using E_commerce.Shared.CommonResult;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -53,7 +53,7 @@ namespace E_commerce.Presentation.Controllers
         private ActionResult HandleProblem(IReadOnlyList<Errors> errors)
         {
             if (errors.Count == 0)
-                return Problem(statusCode: StatusCodes.Status500InternalServerError, title: "An Un Ecpected Error Occurred");
+                return Problem(statusCode: StatusCodes.Status500InternalServerError, title: "An unexpected error occurred");
 
             if(errors.All(e => e.Type == ErrorType.Validation))
                 return HandleValidationProblem(errors);

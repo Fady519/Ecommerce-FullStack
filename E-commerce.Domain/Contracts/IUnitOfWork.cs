@@ -1,4 +1,4 @@
-﻿using E_commerce.Domain.Entites;
+﻿using E_commerce.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace E_commerce.Domain.Contracts
 
         Task<int> SaveChangesAsync();
 
-        IGenericRepository<TEntity , TKey> GetRepository<TEntity , TKey>() where TEntity : BaseEntitey<TKey>;
+        IGenericRepository<TEntity , TKey> GetRepository<TEntity , TKey>() where TEntity : BaseEntity<TKey>;
 
     }
 }

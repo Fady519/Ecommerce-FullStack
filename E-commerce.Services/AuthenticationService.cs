@@ -1,7 +1,7 @@
-﻿using E_commerce.Domain.Entites.IdentityModule;
+﻿using E_commerce.Domain.Entities.IdentityModule;
 using E_commerce.ServicesAbstraction;
 using E_commerce.Shared.DTOs.IdentityDTOs;
-using E_Commerce.Web.CommonResult;
+using E_commerce.Shared.CommonResult;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -17,10 +17,10 @@ namespace E_commerce.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
-        private readonly UserManager<ApplicationUset> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
 
-        public AuthenticationService(UserManager<ApplicationUset> userManager , IConfiguration configuration)
+        public AuthenticationService(UserManager<ApplicationUser> userManager , IConfiguration configuration)
         {
             _userManager = userManager;
             _configuration = configuration;
@@ -49,13 +49,13 @@ namespace E_commerce.Services
             var User = await _userManager.FindByEmailAsync(loginDTO.Email);
             if (User == null)
             {
-                return Errors.InvalidCredentails("User.InvalidCredentails");
+                return Errors.InvalidCredentials("User.InvalidCredentials");
             }
 
             var IsPasswordValid = await _userManager.CheckPasswordAsync(User, loginDTO.Password);
             if (!IsPasswordValid)
             {
-                return Errors.InvalidCredentails("User.InvalidCredentails");
+                return Errors.InvalidCredentials("User.InvalidCredentials");
             }
 
             var Token = await CreateTokenAsync(User);
@@ -65,7 +65,7 @@ namespace E_commerce.Services
         public async Task<Result<UserDTO>> RegisterAsync(RegisterDTO registerDTO)
         {
 
-            var User = new ApplicationUset()
+            var User = new ApplicationUser()
             {
                 Email = registerDTO.Email,
                 DisplayName = registerDTO.DisplayName,
@@ -84,7 +84,7 @@ namespace E_commerce.Services
         }
 
 
-        private async Task<string> CreateTokenAsync(ApplicationUset user)
+        private async Task<string> CreateTokenAsync(ApplicationUser user)
         {
             var Claims = new List<Claim>()
             {

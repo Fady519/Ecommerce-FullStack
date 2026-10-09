@@ -1,4 +1,4 @@
-﻿using E_commerce.Domain.Entites;
+﻿using E_commerce.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace E_commerce.Domain.Contracts
 {
-    public interface IGenericRepository<TEntity, TKey> where TEntity : BaseEntitey<TKey>
+    public interface IGenericRepository<TEntity, TKey> where TEntity : BaseEntity<TKey>
     {
 
         Task<IEnumerable<TEntity>> GetAllAsync();

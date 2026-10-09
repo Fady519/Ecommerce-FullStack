@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using E_commerce.Domain.Contracts;
-using E_commerce.Domain.Entites.OederModule;
-using E_commerce.Domain.Entites.ProductModule;
+using E_commerce.Domain.Entities.OrderModule;
+using E_commerce.Domain.Entities.ProductModule;
 using E_commerce.Services.Specifications;
 using E_commerce.ServicesAbstraction;
 using E_commerce.Shared.DTOs.OrderDTOs;
-using E_Commerce.Web.CommonResult;
+using E_commerce.Shared.CommonResult;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -140,7 +140,7 @@ namespace E_commerce.Services
         }
 
         // Helper Method
-        private static OrderItem CreateOrderItem(Domain.Entites.BasketModule.BasketItems item, Product product)
+        private static OrderItem CreateOrderItem(Domain.Entities.BasketModule.BasketItem item, Product product)
         {
             return new OrderItem()
             {
