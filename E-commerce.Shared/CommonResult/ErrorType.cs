@@ -1,4 +1,4 @@
-﻿namespace E_commerce.Shared.CommonResult
+namespace E_commerce.Shared.CommonResult
 {
     public enum ErrorType
     {
@@ -9,6 +9,8 @@
         Unauthorized = 3,
         forbidden = 4,
         InvalidCredentials = 5,
+        // 409: the request is valid but clashes with existing data (e.g. the email is already registered).
+        Conflict = 6,
 
     }
 }

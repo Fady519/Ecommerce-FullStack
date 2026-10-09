@@ -5,13 +5,9 @@ using E_commerce.Shared.CommonResult;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace E_commerce.Services
 {
@@ -32,59 +28,95 @@ namespace E_commerce.Services
             return User != null ;
         }
 
-        public async Task<Result<UserDTO>> GetUserByEmailAsync(string email)
+        /// <summary>
+        /// The logged-in user's own data. The id comes from the token ("sub"), never from the URL:
+        /// the old version read ?email= from the query string and returned THAT user's data plus a fresh token,
+        /// so any logged-in user could take over any account (including the admin's).
+        /// </summary>
+        public async Task<Result<CurrentUserDTO>> GetCurrentUserAsync(string userId)
         {
-            var User = await _userManager.FindByEmailAsync(email);
-            if(User is null)
-            {
-                return Errors.NotFound("User.NotFound" , $"No User With Email {email} Was Found");
-            }
+            var User = await _userManager.FindByIdAsync(userId);
+            if (User is null)
+                return Errors.NotFound("User.NotFound", "Your account no longer exists.");
 
-            return new UserDTO(User.Email!, User.DisplayName , await CreateTokenAsync(User));
+            var Roles = await _userManager.GetRolesAsync(User);
+            return new CurrentUserDTO(User.Email!, User.DisplayName, User.PhoneNumber, Roles.ToList(), User.CreatedAt);
         }
 
         public async Task<Result<UserDTO>> LoginAsync(LoginDTO loginDTO)
         {
-            
+            // Same message for "no such email" and "wrong password": telling them apart would let
+            // anyone find out which emails have an account.
             var User = await _userManager.FindByEmailAsync(loginDTO.Email);
             if (User == null)
             {
-                return Errors.InvalidCredentials("User.InvalidCredentials");
+                return Errors.InvalidCredentials("User.InvalidCredentials", "Wrong email or password.");
+            }
+
+            // Lockout: after 5 wrong passwords the account is blocked for 10 minutes (see AddJwtAuthentication),
+            // so a password can't be guessed by trying thousands of them.
+            if (await _userManager.IsLockedOutAsync(User))
+            {
+                return LockedOut();
             }
 
             var IsPasswordValid = await _userManager.CheckPasswordAsync(User, loginDTO.Password);
             if (!IsPasswordValid)
             {
-                return Errors.InvalidCredentials("User.InvalidCredentials");
+                // Counts the failure; on the 5th one Identity sets LockoutEnd = now + 10 minutes.
+                await _userManager.AccessFailedAsync(User);
+                return await _userManager.IsLockedOutAsync(User)
+                    ? LockedOut()
+                    : Errors.InvalidCredentials("User.InvalidCredentials", "Wrong email or password.");
             }
 
-            var Token = await CreateTokenAsync(User);
-            return new UserDTO(User.Email!, User.DisplayName, Token);
+            // A successful login starts the count again.
+            await _userManager.ResetAccessFailedCountAsync(User);
+            return await CreateUserResponseAsync(User);
         }
 
         public async Task<Result<UserDTO>> RegisterAsync(RegisterDTO registerDTO)
         {
+            // Checked first so the client gets a clear 409 instead of Identity's generic validation error.
+            if (await _userManager.FindByEmailAsync(registerDTO.Email) is not null)
+                return Errors.Conflict("User.EmailTaken", "An account with this email already exists.");
 
             var User = new ApplicationUser()
             {
                 Email = registerDTO.Email,
-                DisplayName = registerDTO.DisplayName,
+                DisplayName = registerDTO.DisplayName.Trim(),
                 PhoneNumber = registerDTO.PhoneNumber,
-                UserName = registerDTO.UserName,
+                // The email is the user name: Identity doesn't allow spaces in user names.
+                UserName = registerDTO.Email,
             };
             var IdentityUser = await _userManager.CreateAsync(User , registerDTO.Password);
-            if(IdentityUser.Succeeded)
+            if(!IdentityUser.Succeeded)
             {
-                var Token = await CreateTokenAsync(User);
-                return new UserDTO(User.Email, User.DisplayName, Token);
+                // One 400 entry per broken password rule ("PasswordRequiresDigit"...), so the form can show each one.
+                return IdentityUser.Errors.Select(E => Errors.Validation(E.Code , E.Description)).ToList();
             }
 
-            return IdentityUser.Errors.Select(E => Errors.Validation(E.Code , E.Description)).ToList();
-            
+            // Public sign-up is always a Customer. The role never comes from the request,
+            // otherwise anyone could register as Admin.
+            var RoleResult = await _userManager.AddToRoleAsync(User, AppRoles.Customer);
+            if (!RoleResult.Succeeded)
+                throw new InvalidOperationException($"Could not give the Customer role: {string.Join(", ", RoleResult.Errors.Select(E => E.Code))}");
+
+            return await CreateUserResponseAsync(User);
         }
 
 
-        private async Task<string> CreateTokenAsync(ApplicationUser user)
+        private static Errors LockedOut() =>
+            Errors.InvalidCredentials("User.LockedOut", "Too many failed attempts. The account is locked for 10 minutes.");
+
+        private async Task<UserDTO> CreateUserResponseAsync(ApplicationUser user)
+        {
+            var Roles = (await _userManager.GetRolesAsync(user)).ToList();
+            var ExpiresAt = DateTime.UtcNow.AddMinutes(_configuration.GetValue("JWTOptions:AccessTokenMinutes", 60));
+            return new UserDTO(user.Email!, user.DisplayName, CreateToken(user, Roles, ExpiresAt), Roles, ExpiresAt);
+        }
+
+        private string CreateToken(ApplicationUser user, IReadOnlyList<string> roles, DateTime expiresAt)
         {
             var Claims = new List<Claim>()
             {
@@ -92,11 +124,13 @@ namespace E_commerce.Services
                 // orders are linked to this id (an email can change, the id never does).
                 new Claim(JwtRegisteredClaimNames.Sub , user.Id),
                 new Claim(JwtRegisteredClaimNames.Email , user.Email!),
-                 new Claim(JwtRegisteredClaimNames.Name , user.UserName!),
+                 new Claim(JwtRegisteredClaimNames.Name , user.DisplayName),
+                // Unique token id: useful in logs, and the base for revoking single tokens later.
+                new Claim(JwtRegisteredClaimNames.Jti , Guid.NewGuid().ToString()),
             };
 
-            var Roles = await _userManager.GetRolesAsync(user);
-            foreach(var role in Roles)
+            // The role claim is what [Authorize(Policy = "AdminOnly")] checks.
+            foreach(var role in roles)
             {
                 Claims.Add(new Claim(ClaimTypes.Role, role));
             }
@@ -110,7 +144,7 @@ namespace E_commerce.Services
             var Token = new JwtSecurityToken(
                 issuer: _configuration["JWTOptions:Issuer"],
                 audience: _configuration["JWTOptions:Audience"],
-                expires: DateTime.UtcNow.AddHours(1),
+                expires: expiresAt,
                 claims: Claims,
                 signingCredentials: Cred
                 );

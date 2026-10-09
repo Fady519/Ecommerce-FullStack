@@ -1,10 +1,11 @@
-﻿using E_commerce.Shared.CommonResult;
+using E_commerce.Shared.CommonResult;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,6 +15,17 @@ namespace E_commerce.Presentation.Controllers
     [Route("api/[Controller]")]
     public class ApiBaseController : ControllerBase
     {
+
+        /// <summary>
+        /// The caller's user id from the token ("sub"), or null for a guest. Even on public endpoints the token
+        /// is read when it is sent, so the basket can tell a guest from its owner.
+        /// Never take a user id or email from the URL or body: that was the account-takeover bug.
+        /// </summary>
+        protected string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        /// <summary>Only for [Authorize] actions: a valid token always carries the "sub" claim.</summary>
+        protected string RequiredUserId => CurrentUserId
+            ?? throw new InvalidOperationException("RequiredUserId used on an action without [Authorize].");
 
         // Handle Result Without Value
         // if result is success  => return no content
@@ -84,6 +96,7 @@ namespace E_commerce.Presentation.Controllers
             ErrorType.forbidden => StatusCodes.Status403Forbidden,
             ErrorType.Validation => StatusCodes.Status400BadRequest,
             ErrorType.InvalidCredentials => StatusCodes.Status401Unauthorized,
+            ErrorType.Conflict => StatusCodes.Status409Conflict,
             ErrorType.Failure => StatusCodes.Status500InternalServerError,
             _=> StatusCodes.Status500InternalServerError
         };

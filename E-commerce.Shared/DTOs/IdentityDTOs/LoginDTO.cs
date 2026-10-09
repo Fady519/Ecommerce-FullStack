@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E_commerce.Shared.DTOs.IdentityDTOs
 {
-    public record LoginDTO([EmailAddress]string Email , string Password)
-    {
-
-
-
-    }
+    public record LoginDTO(
+        [Required, EmailAddress] string Email,
+        [Required] string Password);
 }

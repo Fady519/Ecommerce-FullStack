@@ -1,10 +1,5 @@
-﻿using E_commerce.Shared.DTOs.IdentityDTOs;
+using E_commerce.Shared.DTOs.IdentityDTOs;
 using E_commerce.Shared.CommonResult;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E_commerce.ServicesAbstraction
 {
@@ -19,7 +14,8 @@ namespace E_commerce.ServicesAbstraction
 
         Task<bool> CheckEmailAsync(string email);
 
-        Task<Result<UserDTO>> GetUserByEmailAsync(string email);
+        /// <summary>The caller's own data; <paramref name="userId"/> must come from the token.</summary>
+        Task<Result<CurrentUserDTO>> GetCurrentUserAsync(string userId);
 
     }
 }
