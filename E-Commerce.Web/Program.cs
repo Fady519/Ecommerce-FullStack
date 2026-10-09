@@ -57,6 +57,9 @@ namespace E_Commerce.Web
 
             app.UseCors(ServiceCollectionExtensions.FrontendCorsPolicy);
 
+            // After CORS, so the React app can read a 429 response too.
+            app.UseRateLimiter();
+
             app.UseAuthentication();  // 1) who are you?
             app.UseAuthorization();   // 2) are you allowed?
 
