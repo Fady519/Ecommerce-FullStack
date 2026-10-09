@@ -3,104 +3,117 @@
     "Name": "Classic White T-Shirt",
     "Description": "A soft cotton white t-shirt that goes with everything. Perfect for casual everyday wear.",
     "Price": 120,
+    "Stock": 60,
     "PictureUrl": "images/products/ClassicWhiteTShirt.jpeg",
-    "TypeId": 1,
-    "BrandId": 1
+    "Type": "Tops",
+    "Brand": "H&M"
   },
   {
     "Name": "Slim Fit Jeans",
     "Description": "These mid-rise slim fit jeans offer a comfortable stretch and a stylish look for all occasions.",
     "Price": 350,
+    "Stock": 40,
     "PictureUrl": "images/products/SlimFitJeans.jpg",
-    "TypeId": 2,
-    "BrandId": 2
+    "Type": "Bottoms",
+    "Brand": "ZARA"
   },
   {
     "Name": "Denim Jacket",
     "Description": "A timeless denim jacket with a slightly faded wash. Layer it over any outfit for an instant upgrade.",
     "Price": 500,
+    "Stock": 25,
     "PictureUrl": "images/products/DenimJacket.jpg",
-    "TypeId": 3,
-    "BrandId": 2
+    "Type": "Outerwear & Dresses",
+    "Brand": "ZARA"
   },
   {
     "Name": "Cotton Hoodie",
     "Description": "Soft and cozy cotton hoodie with adjustable drawstring and kangaroo pocket. Ideal for cool evenings.",
     "Price": 400,
+    "Stock": 35,
     "PictureUrl": "images/products/CottonHoodie.jpg",
-    "TypeId": 1,
-    "BrandId": 3
+    "Type": "Tops",
+    "Brand": "Nike"
   },
   {
     "Name": "Formal Blazer",
     "Description": "Tailored-fit blazer that adds a touch of sophistication to any outfit. Perfect for business or evening wear.",
     "Price": 850,
+    "Stock": 12,
     "PictureUrl": "images/products/FormalBlazer.jpg",
-    "TypeId": 3,
-    "BrandId": 4
+    "Type": "Outerwear & Dresses",
+    "Brand": "Activ"
   },
   {
     "Name": "Summer Floral Dress",
     "Description": "Flowy floral summer dress with adjustable straps and a flattering waistline. Breathable and comfortable.",
     "Price": 450,
+    "Stock": 18,
     "PictureUrl": "images/products/SummerFloralDress.jpg",
-    "TypeId": 3,
-    "BrandId": 5
+    "Type": "Outerwear & Dresses",
+    "Brand": "Mango"
   },
   {
     "Name": "Men's Leather Jacket",
     "Description": "Classic brown leather jacket with zip closure and side pockets. Durable and stylish for all seasons.",
     "Price": 1200,
+    "Stock": 4,
     "PictureUrl": "images/products/MensLeatherJacket.jpg",
-    "TypeId": 3,
-    "BrandId": 6
+    "Type": "Outerwear & Dresses",
+    "Brand": "Levi's"
   },
   {
     "Name": "Casual Sneakers",
     "Description": "Lightweight sneakers designed for everyday wear. Breathable material with cushioned soles.",
     "Price": 600,
+    "Stock": 30,
     "PictureUrl": "images/products/CasualSneakers.jpg",
-    "TypeId": 4,
-    "BrandId": 3
+    "Type": "Accessories & Footwear",
+    "Brand": "Nike"
   },
   {
     "Name": "Classic Black Dress Pants",
     "Description": "Slim-cut black dress pants that offer a polished look for formal or office wear.",
     "Price": 400,
+    "Stock": 22,
     "PictureUrl": "images/products/ClassicBlackDressPants.jpg",
-    "TypeId": 2,
-    "BrandId": 1
+    "Type": "Bottoms",
+    "Brand": "H&M"
   },
   {
     "Name": "Knitted Sweater",
     "Description": "Warm knitted sweater with a crew neckline and ribbed cuffs. Ideal for layering in winter.",
     "Price": 380,
+    "Stock": 0,
     "PictureUrl": "images/products/KnittedSweater.jpg",
-    "TypeId": 1,
-    "BrandId": 2
+    "Type": "Tops",
+    "Brand": "ZARA"
   },
   {
     "Name": "Men's Polo Shirt",
     "Description": "Classic short-sleeve polo shirt with a soft feel and neat collar. Perfect for casual Fridays.",
     "Price": 200,
+    "Stock": 50,
     "PictureUrl": "images/products/MensPoloShirt.jpg",
-    "TypeId": 1,
-    "BrandId": 4
+    "Type": "Tops",
+    "Brand": "Activ"
   },
   {
     "Name": "Women's Trench Coat",
     "Description": "Chic beige trench coat with adjustable belt and water-resistant fabric. A wardrobe essential.",
     "Price": 950,
+    "Stock": 8,
     "PictureUrl": "images/products/WomensTrenchCoat.jpeg",
-    "TypeId": 3,
-    "BrandId": 5
+    "Type": "Outerwear & Dresses",
+    "Brand": "Mango"
   },
   {
     "Name": "Wool Scarf",
     "Description": "Soft wool scarf that keeps you warm while adding a stylish touch to your winter outfits.",
     "Price": 150,
+    "Stock": 45,
     "PictureUrl": "images/products/WoolScarf.jpg",
-    "TypeId": 4,
-    "BrandId": 2
+    "Type": "Accessories & Footwear",
+    "Brand": "ZARA"
   }
 ]
