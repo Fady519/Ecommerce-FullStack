@@ -1,4 +1,4 @@
-﻿
+
 using E_commerce.Domain.Contracts;
 using E_commerce.Domain.Entities.IdentityModule;
 using E_commerce.Persistence.Data.DataSeed;
@@ -7,7 +7,8 @@ using E_commerce.Persistence.IdentityData;
 using E_commerce.Persistence.IdentityData.DataSeed;
 using E_commerce.Persistence.Repositories;
 using E_commerce.Services;
-using E_commerce.Services.MappingProfiles;
+using E_commerce.Services.Mapping;
+using E_Commerce.Web.Infrastructure;
 using E_commerce.ServicesAbstraction;
 using E_Commerce.Web.CustomMiddleware;
 using E_Commerce.Web.Extensions;
@@ -50,9 +51,8 @@ namespace E_Commerce.Web
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
-            //builder.Services.AddAutoMapper(X => X.AddProfile<ProductProfile>());
-            //builder.Services.AddTransient<ProductPictureUrlResolver>();
-            builder.Services.AddAutoMapper(typeof(ServiceAssemblyReference).Assembly);
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<IPictureUrlBuilder, RequestPictureUrlBuilder>();
 
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddSingleton<IConnectionMultiplexer>(SP =>

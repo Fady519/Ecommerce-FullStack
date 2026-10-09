@@ -1,4 +1,4 @@
-using AutoMapper;
+using E_commerce.Services.Mapping;
 using E_commerce.Domain.Contracts;
 using E_commerce.Domain.Entities.BasketModule;
 using E_commerce.Domain.Entities.OrderModule;
@@ -19,14 +19,12 @@ namespace E_commerce.Services
     {
         private readonly IBasketRepository basketRepository;
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
         private readonly IConfiguration configuration;
 
-        public PaymentService(IBasketRepository basketRepository , IUnitOfWork unitOfWork , IMapper mapper , IConfiguration configuration)
+        public PaymentService(IBasketRepository basketRepository , IUnitOfWork unitOfWork , IConfiguration configuration)
         {
             this.basketRepository = basketRepository;
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
             this.configuration = configuration;
         }
 
@@ -88,7 +86,7 @@ namespace E_commerce.Services
             }
 
             await basketRepository.CreateOrUpdateBasketAsync(Basket);
-            return mapper.Map<CustomerBasket, BasketDTO>(Basket);
+            return Basket.ToDto();
 
         }
     }
