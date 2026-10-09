@@ -36,7 +36,7 @@ namespace E_commerce.Services
             
            
 
-            StripeConfiguration.ApiKey = configuration["StripeSetings:SecretKey"];
+            StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
 
             var Basket = await basketRepository.GetBasketAsync(BasketId);
             if(Basket == null)
@@ -53,7 +53,11 @@ namespace E_commerce.Services
 
             // DeliverMethod
 
-            var DeliveryMethod = await unitOfWork.GetRepository<DeliveryMethod, int>().GetById(Basket.DeliveryMethodId.Value);
+            // A delivery method must be chosen before paying: its price is part of the amount.
+            if (Basket.DeliveryMethodId is not int deliveryMethodId)
+                throw new DeliveryMethodNotFoundException(null);
+            var DeliveryMethod = await unitOfWork.GetRepository<DeliveryMethod, int>().GetById(deliveryMethodId)
+                ?? throw new DeliveryMethodNotFoundException(deliveryMethodId);
 
             Basket.ShippingPrice = DeliveryMethod.Price;
 
