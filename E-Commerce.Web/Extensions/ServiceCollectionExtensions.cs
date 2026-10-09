@@ -1,10 +1,12 @@
 using System.Reflection;
 using System.Text;
+using System.Threading.RateLimiting;
 using E_commerce.Domain.Contracts;
 using E_commerce.Domain.Entities.IdentityModule;
 using E_commerce.Persistence.Data.DataSeed;
 using E_commerce.Persistence.Data.DbContexts;
 using E_commerce.Persistence.Repositories;
+using E_commerce.Presentation;
 using E_commerce.Presentation.Controllers;
 using E_commerce.Services;
 using E_commerce.Services.Mapping;
@@ -14,6 +16,7 @@ using E_Commerce.Web.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
@@ -52,16 +55,33 @@ namespace E_Commerce.Web.Extensions
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IBasketService, BasketService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IPaymentService, PaymentService>();
 
             return services;
         }
 
-        /// <summary>ASP.NET Identity (users + roles) and JWT bearer authentication.</summary>
+        /// <summary>ASP.NET Identity (users + roles), JWT bearer authentication, policies and login rate limiting.</summary>
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddIdentityCore<ApplicationUser>()
+            services.AddIdentityCore<ApplicationUser>(options =>
+                {
+                    // Password: 8+ characters with upper case, lower case and a digit (symbols optional).
+                    options.Password.RequiredLength = 8;
+                    options.Password.RequireDigit = true;
+                    options.Password.RequireUppercase = true;
+                    options.Password.RequireLowercase = true;
+                    options.Password.RequireNonAlphanumeric = false;
+
+                    // The email is the login, so two accounts can't share one.
+                    options.User.RequireUniqueEmail = true;
+
+                    // 5 wrong passwords → locked for 10 minutes (AuthenticationService counts the failures).
+                    options.Lockout.MaxFailedAccessAttempts = 5;
+                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+                    options.Lockout.AllowedForNewUsers = true;
+                })
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<StoreDbContext>();
 
@@ -88,6 +108,47 @@ namespace E_Commerce.Web.Extensions
                     ValidIssuer = configuration["JWTOptions:Issuer"],
                     ValidAudience = configuration["JWTOptions:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+                    // The default tolerance is 5 minutes; 1 is enough for small clock differences.
+                    ClockSkew = TimeSpan.FromMinutes(1),
+                };
+            });
+
+            // Policies: controllers ask for a name, the rule lives here.
+            services.AddAuthorizationBuilder()
+                .AddPolicy(AuthPolicies.AdminOnly, policy => policy.RequireRole(AppRoles.Admin));
+
+            // Login/register/emailExists: 10 requests per minute per IP. Together with the lockout this makes
+            // password guessing impractical. Over the limit → 429 with a Problem Details body and Retry-After.
+            var permitPerMinute = configuration.GetValue("RateLimiting:AuthPermitPerMinute", 10);
+            services.AddRateLimiter(options =>
+            {
+                options.AddPolicy(AuthPolicies.AuthRateLimit, context =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                        _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = permitPerMinute,
+                            Window = TimeSpan.FromMinutes(1),
+                            QueueLimit = 0,
+                        }));
+
+                options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+                options.OnRejected = async (context, cancellationToken) =>
+                {
+                    if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
+                        context.HttpContext.Response.Headers.RetryAfter = ((int)retryAfter.TotalSeconds).ToString();
+
+                    var problemDetails = context.HttpContext.RequestServices.GetRequiredService<IProblemDetailsService>();
+                    await problemDetails.WriteAsync(new ProblemDetailsContext
+                    {
+                        HttpContext = context.HttpContext,
+                        ProblemDetails = new ProblemDetails
+                        {
+                            Status = StatusCodes.Status429TooManyRequests,
+                            Title = "Too many requests",
+                            Detail = "Too many attempts from your network. Please wait a minute and try again.",
+                        },
+                    });
                 };
             });
 

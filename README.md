@@ -202,16 +202,29 @@ erDiagram
 
 ## 🔌 API Endpoints
 
-| Method | Endpoint | Auth | Description |
+Access: 🌐 public · 👤 any logged-in user · 🛠️ admin only (`AdminOnly` policy → 401 without a token, 403 for customers).
+The user is always taken from the token — no endpoint accepts a user id or email to act on someone else's data.
+
+| Method | Endpoint | Access | Description |
 |---|---|---|---|
-| `POST` | `/api/account/register` | ❌ | Register new user |
-| `POST` | `/api/account/login` | ❌ | Login & get JWT |
-| `GET` | `/api/products` | ❌ | Get all products (cached) |
-| `GET` | `/api/products/{id}` | ❌ | Get product details |
-| `GET` | `/api/basket` | ✅ | Get user basket |
-| `POST` | `/api/basket` | ✅ | Add item to basket |
-| `POST` | `/api/orders` | ✅ | Place an order |
-| `POST` | `/api/payments` | ✅ | Create Stripe payment intent |
+| `POST` | `/api/Authentication/Register` | 🌐 | Create a **Customer** account (email = user name). 409 if the email is taken · rate limited |
+| `POST` | `/api/Authentication/Login` | 🌐 | JWT + roles + expiry. 5 wrong passwords lock the account for 10 min · rate limited |
+| `GET` | `/api/Authentication/emailExists?email=` | 🌐 | For the sign-up form · rate limited |
+| `GET` | `/api/Authentication/CurrentUser` | 👤 | The logged-in user (from the token) |
+| `GET` `PUT` | `/api/Account/profile` | 👤 | Display name and phone |
+| `GET` `PUT` | `/api/Account/address` | 👤 | Saved shipping address (pre-fills checkout) |
+| `POST` | `/api/Account/change-password` | 👤 | Needs the current password |
+| `GET` | `/api/Products` | 🌐 | Paged catalog: `brandId`, `typeId`, `sort`, `search`, `pageIndex`, `pageSize` (output cached) |
+| `GET` | `/api/Products/{id}` · `/brands` · `/types` | 🌐 | Product details, brands, types |
+| `GET` `POST` `DELETE` | `/api/Basket` | 🌐 | Guest basket by its random id; once owned by a user, only that user can use it |
+| `GET` | `/api/Basket/mine` | 👤 | The user's basket (e.g. on a new device) |
+| `POST` | `/api/Basket/{id}/claim` | 👤 | After login: link the guest basket to the user and merge an older one |
+| `POST` | `/api/Payment/{basketId}` | 👤 | Create/update the Stripe payment intent (amount computed on the server) |
+| `POST` `GET` | `/api/Order` · `/api/Order/{id}` | 👤 | Place an order · my orders (someone else's order → 404) |
+| `GET` | `/api/Order/DeliveryMethods` | 🌐 | Shipping options (EGP) |
+| `POST` | `/api/admin/users/unlock` | 🛠️ | Lift a lockout early |
+
+Login, register and emailExists allow **10 requests per minute per IP** (`429` + `Retry-After` after that).
 
 > Full interactive docs available on **[Swagger UI](http://ecommercesolution.runasp.net/swagger/index.html)**
 

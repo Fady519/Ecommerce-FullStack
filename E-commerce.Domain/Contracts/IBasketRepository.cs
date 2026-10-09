@@ -11,5 +11,8 @@ namespace E_commerce.Domain.Contracts
         Task<CustomerBasket> CreateOrUpdateBasketAsync(CustomerBasket basket);
 
         Task<bool> DeleteBasketAsync(string basketId);
+
+        /// <summary>All baskets owned by the user, newest first, with their items and products.</summary>
+        Task<List<CustomerBasket>> GetUserBasketsAsync(string userId);
     }
 }

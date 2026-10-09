@@ -1,4 +1,4 @@
-﻿namespace E_commerce.Shared.CommonResult
+namespace E_commerce.Shared.CommonResult
 {
     public class Errors
     {
@@ -46,6 +46,11 @@
         public static Errors InvalidCredentials(string Code = "General.InvalidCredentials", string Description = "A General Has Occurred")
         {
             return new Errors(Code, Description, ErrorType.InvalidCredentials);
+        }
+
+        public static Errors Conflict(string Code = "General.Conflict", string Description = "The request conflicts with existing data")
+        {
+            return new Errors(Code, Description, ErrorType.Conflict);
         }
 
         #endregion

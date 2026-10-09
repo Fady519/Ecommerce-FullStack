@@ -1,4 +1,4 @@
-﻿using E_commerce.ServicesAbstraction;
+using E_commerce.ServicesAbstraction;
 using E_commerce.Shared.DTOs.BasketDTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +23,7 @@ namespace E_commerce.Presentation.Controllers
         [HttpPost("{basketId}")]
         public async Task<ActionResult<BasketDTO>> CreateOrUpdatePaymentIntent(string BasketId)
         {
-            var Basket = await paymentService.CreateOrUpdatePaymentIntentAsync(BasketId);
+            var Basket = await paymentService.CreateOrUpdatePaymentIntentAsync(BasketId, RequiredUserId);
             return Ok(Basket);
         }
 

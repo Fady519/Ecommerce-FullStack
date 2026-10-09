@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E_commerce.Shared.DTOs.IdentityDTOs
 {
-    public record RegisterDTO([EmailAddress] string Email , string DisplayName , string UserName , string Password , [Phone] string PhoneNumber)
-    {
-
-
-
-
-    }
+    /// <summary>
+    /// Sign-up form. There is no UserName field any more: the email IS the user name
+    /// (Identity refuses spaces in user names, so "Omar Hassan" used to fail).
+    /// There is no Role field either: public sign-up always creates a Customer.
+    /// Password rules (8+ chars, upper, lower, digit) are checked by Identity and come back as 400 per rule.
+    /// </summary>
+    public record RegisterDTO(
+        [Required, EmailAddress, MaxLength(256)] string Email,
+        [Required, StringLength(100, MinimumLength = 2)] string DisplayName,
+        [Required] string Password,
+        [Phone, MaxLength(20)] string? PhoneNumber);
 }
