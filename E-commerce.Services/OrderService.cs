@@ -34,7 +34,7 @@ namespace E_commerce.Services
             var OrderAddress = orderDTO.AddressDTO.ToEntity();
 
             var Basket = await _basketRepository.GetBasketAsync(orderDTO.BasketId);
-            if (Basket == null) return Errors.NotFound("Basket.NotFound", $"the basket with id : {orderDTO.BasketId} is null");
+            if (Basket == null || !Basket.CanBeUsedBy(userId)) return Errors.NotFound("Basket.NotFound", $"the basket with id : {orderDTO.BasketId} is null");
             if (Basket.Items.Count == 0) return Errors.Validation("Basket.Empty", "The basket is empty.");
 
 

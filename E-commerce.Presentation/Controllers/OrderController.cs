@@ -56,7 +56,7 @@ namespace E_commerce.Presentation.Controllers
 
 
         // [Authorize] guarantees a valid token, and our tokens always carry the id ("sub") and email claims.
-        protected string GetUserIdFromToken() => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        protected string GetUserIdFromToken() => RequiredUserId;
 
         protected string GetEmailFromToken()
         {

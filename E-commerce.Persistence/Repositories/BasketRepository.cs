@@ -69,5 +69,16 @@ namespace E_commerce.Persistence.Repositories
             var deleted = await dbContext.Baskets.Where(B => B.ID == basketId).ExecuteDeleteAsync();
             return deleted > 0;
         }
+
+        public Task<List<CustomerBasket>> GetUserBasketsAsync(string userId)
+        {
+            return dbContext.Baskets
+                .Where(B => B.UserId == userId)
+                .OrderByDescending(B => B.UpdatedAt)
+                .Include(B => B.Items).ThenInclude(I => I.Product)
+                .Include(B => B.DeliveryMethod)
+                .AsSplitQuery()
+                .ToListAsync();
+        }
     }
 }

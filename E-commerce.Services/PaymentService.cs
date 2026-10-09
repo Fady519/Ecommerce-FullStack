@@ -31,7 +31,7 @@ namespace E_commerce.Services
             this.pictures = pictures;
         }
 
-        public async Task<BasketDTO> CreateOrUpdatePaymentIntentAsync(string BasketId)
+        public async Task<BasketDTO> CreateOrUpdatePaymentIntentAsync(string BasketId, string userId)
         {
 
             // 1 ) Configure Stripe => Download Package "Stripe.Net"
@@ -42,7 +42,8 @@ namespace E_commerce.Services
             StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
 
             var Basket = await basketRepository.GetBasketAsync(BasketId);
-            if(Basket == null)
+            // Someone else's basket looks exactly like a missing one (404).
+            if(Basket == null || !Basket.CanBeUsedBy(userId))
             {
                 throw new BasketNotFoundException(BasketId);
             }
