@@ -1,4 +1,4 @@
-﻿using E_commerce.Domain.Entities;
+using E_commerce.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +15,9 @@ namespace E_commerce.Domain.Contracts
 
         public Expression<Func<TEntity , bool>> Criteria { get; }
 
-        public Expression<Func<TEntity , object>> OrderBy { get; }
+        public Expression<Func<TEntity , object>>? OrderBy { get; }
 
-        public Expression<Func<TEntity, object>> OrderByDescending { get; }
+        public Expression<Func<TEntity, object>>? OrderByDescending { get; }
 
         public int Skip { get; }
 

@@ -1,4 +1,4 @@
-﻿using E_commerce.Domain.Entities.IdentityModule;
+using E_commerce.Domain.Entities.IdentityModule;
 using E_commerce.ServicesAbstraction;
 using E_commerce.Shared.DTOs.IdentityDTOs;
 using E_commerce.Shared.CommonResult;
@@ -40,7 +40,7 @@ namespace E_commerce.Services
                 return Errors.NotFound("User.NotFound" , $"No User With Email {email} Was Found");
             }
 
-            return new UserDTO(User.Email, User.DisplayName , await CreateTokenAsync(User));
+            return new UserDTO(User.Email!, User.DisplayName , await CreateTokenAsync(User));
         }
 
         public async Task<Result<UserDTO>> LoginAsync(LoginDTO loginDTO)
@@ -98,7 +98,9 @@ namespace E_commerce.Services
                 Claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            var SecretKey = _configuration["JWTOptions:SecretKey"];
+            // Checked at startup (AddJwtAuthentication), so it is never missing here.
+            var SecretKey = _configuration["JWTOptions:SecretKey"]
+                ?? throw new InvalidOperationException("JWTOptions:SecretKey is not configured.");
             var Key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecretKey));
             var Cred = new SigningCredentials(Key , SecurityAlgorithms.HmacSha256);
 

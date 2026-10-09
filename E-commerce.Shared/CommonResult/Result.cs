@@ -1,4 +1,4 @@
-﻿namespace E_commerce.Shared.CommonResult
+namespace E_commerce.Shared.CommonResult
 {
     public class Result
     {
@@ -39,9 +39,10 @@
     public class Result<TValue> : Result
     {
 
-        private readonly TValue _value;
+        // Nullable because a failed result has no value; Value below guards access.
+        private readonly TValue? _value;
 
-        public TValue Value => IsSuccess ? _value : throw new InvalidOperationException("Can Not Access The Value Of Failure");
+        public TValue Value => IsSuccess ? _value! : throw new InvalidOperationException("Can Not Access The Value Of Failure");
 
         private Result(TValue value) : base()
         {

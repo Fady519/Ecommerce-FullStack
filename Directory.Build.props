@@ -1,0 +1,7 @@
+<Project>
+  <!-- Shared by every .csproj in this folder. -->
+  <PropertyGroup>
+    <!-- Keep the build at 0 warnings: a new warning fails the build instead of piling up. -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+</Project>

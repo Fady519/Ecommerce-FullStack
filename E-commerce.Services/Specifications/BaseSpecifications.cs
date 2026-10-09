@@ -1,4 +1,4 @@
-﻿using E_commerce.Domain.Contracts;
+using E_commerce.Domain.Contracts;
 using E_commerce.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -18,9 +18,10 @@ namespace E_commerce.Services.Specifications
 
         #region Sorting
 
-        public Expression<Func<TEntity, object>> OrderBy { get; private set; }
+        // Nullable: most queries have no sort order.
+        public Expression<Func<TEntity, object>>? OrderBy { get; private set; }
 
-        public Expression<Func<TEntity, object>> OrderByDescending { get; private set; }
+        public Expression<Func<TEntity, object>>? OrderByDescending { get; private set; }
 
         protected void AddOrderBy(Expression<Func<TEntity , object>> orderByExpression)
         {
