@@ -17,6 +17,10 @@ namespace E_commerce.Domain.Entities.ProductModule
 
         public string PictureUrl { get; set; } = default!;
 
+        public bool IsActive { get; set; } = true;
+
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+
 
         public decimal Price { get; set; }
 

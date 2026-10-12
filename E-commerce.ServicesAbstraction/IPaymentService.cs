@@ -13,5 +13,7 @@ namespace E_commerce.ServicesAbstraction
         /// <summary><paramref name="userId"/> = the caller from the token; a basket owned by someone else is a 404.</summary>
         Task<BasketDTO> CreateOrUpdatePaymentIntentAsync(string BasketId, string userId);
 
+        /// <summary>Updates order status based on Stripe payment intent webhooks. Returns false if signature is invalid.</summary>
+        Task<bool> ProcessWebhookAsync(string json, string signature);
     }
 }

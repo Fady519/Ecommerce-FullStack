@@ -21,8 +21,10 @@ namespace E_commerce.ServicesAbstraction
 
         Task<Result<IEnumerable<DeliveryMethodDTO>>> GetDeliveryMethods();
 
-
         Task<Result<OrderToReturnDTO>> GetOrderByIdAsync(Guid id, string userId);
 
+        Task<Result<IEnumerable<OrderToReturnDTO>>> GetAllOrdersForAdminAsync();
+
+        Task<Result<OrderToReturnDTO>> UpdateOrderStatusAsync(Guid orderId, string statusText);
     }
 }

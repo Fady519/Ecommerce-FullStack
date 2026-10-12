@@ -1,30 +1,42 @@
+import { lazy, Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import BtmHeader from "./components/Header/BtmHeader";
 import TopHeader from "./components/Header/TopHeader";
-import Cart from "./page/Cart/Cart";
-import Home from "./page/home/Home";
-import ProductDeatails from "./page/home/ProductDetails/ProductDeatails";
 import { Routes, Route, useLocation } from "react-router-dom";
 import ScrollToTop from "./components/ScrollToTop";
 import { AnimatePresence } from "framer-motion";
-import CategoryPage from "./page/CategoryPage/CategoryPage";
-import SearchResults from "./page/SearchResults";
-import Favorites from "./page/Favorites/Favorites";
-import About from "./page/About/About";
-import Contact from "./page/Contact/Contact";
-import BlogList from "./page/Blog/BlogList";
-import BlogDetail from "./page/Blog/BlogDetails";
-import Accessories from "./page/Accessories/Accessories";
-import Login from "./components/Login/Login";
-import Register from "./components/Register/Register";
 import ProtectedRoute from "./page/ProtectedRoute";
+import AdminRoute from "./page/Admin/AdminRoute";
+import PageTitleManager from "./components/PageTitleManager";
+import RouteLoading from "./components/RouteLoading";
 
+// Eager load Home for instant First Contentful Paint
+import Home from "./page/home/Home";
+
+// Lazy-loaded routes for code-splitting and Lighthouse optimization
+const Cart = lazy(() => import("./page/Cart/Cart"));
+const ProductDeatails = lazy(() => import("./page/home/ProductDetails/ProductDeatails"));
+const CategoryPage = lazy(() => import("./page/CategoryPage/CategoryPage"));
+const SearchResults = lazy(() => import("./page/SearchResults"));
+const Favorites = lazy(() => import("./page/Favorites/Favorites"));
+const About = lazy(() => import("./page/About/About"));
+const Contact = lazy(() => import("./page/Contact/Contact"));
+const BlogList = lazy(() => import("./page/Blog/BlogList"));
+const BlogDetail = lazy(() => import("./page/Blog/BlogDetails"));
+const Accessories = lazy(() => import("./page/Accessories/Accessories"));
+const Login = lazy(() => import("./components/Login/Login"));
+const Register = lazy(() => import("./components/Register/Register"));
+const Checkout = lazy(() => import("./page/Checkout/Checkout"));
+const MyOrders = lazy(() => import("./page/Orders/MyOrders"));
+const AdminDashboard = lazy(() => import("./page/Admin/AdminDashboard"));
+const NotFound = lazy(() => import("./page/NotFound/NotFound"));
 
 function App() {
   const location = useLocation();
 
   return (
     <>
+      <PageTitleManager />
       <header>
         <TopHeader />
         <BtmHeader />
@@ -32,36 +44,48 @@ function App() {
 
       <Toaster position="bottom-right" toastOptions={{
         style: {
-          background: '#e9e9e9',
-          borderRadius: '5px',
+          background: '#333',
+          color: '#fff',
+          borderRadius: '8px',
           padding: '14px'
         }
       }} />
 
       <ScrollToTop />
 
-      <AnimatePresence mode="wait">
-        <Routes location={location} key={location.pathname}>
-          
-          {/* الصفحات المفتوحة للكل */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+      <Suspense fallback={<RouteLoading />}>
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            
+            {/* Public browsing routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/search" element={<SearchResults />} />
+            <Route path="/products/:id" element={<ProductDeatails />} />
+            <Route path="/category" element={<CategoryPage />} />
+            <Route path="/category/:category" element={<CategoryPage />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/blog" element={<BlogList />} />
+            <Route path="/blog/:id" element={<BlogDetail />} />
+            <Route path="/accessories" element={<Accessories />} />
 
-          {/* الصفحات المحمية - لن تفتح إلا بعد تسجيل الدخول */}
-          <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-          <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
-          <Route path="/search" element={<ProtectedRoute><SearchResults /></ProtectedRoute>} />
-          <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
-          <Route path="/about" element={<ProtectedRoute><About /></ProtectedRoute>} />
-          <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
-          <Route path="/blog" element={<ProtectedRoute><BlogList /></ProtectedRoute>} />
-          <Route path="/blog/:id" element={<ProtectedRoute><BlogDetail /></ProtectedRoute>} />
-          <Route path="/accessories" element={<ProtectedRoute><Accessories /></ProtectedRoute>} />
-          <Route path="/products/:id" element={<ProtectedRoute><ProductDeatails /></ProtectedRoute>} />
-          <Route path="/category/:category" element={<ProtectedRoute><CategoryPage /></ProtectedRoute>} />
+            {/* Authenticated member routes */}
+            <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+            <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+            <Route path="/orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+            <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
 
-        </Routes>
-      </AnimatePresence>
+            {/* Admin portal */}
+            <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+
+            {/* 404 Not Found Catch-All */}
+            <Route path="*" element={<NotFound />} />
+
+          </Routes>
+        </AnimatePresence>
+      </Suspense>
     </>
   );
 }

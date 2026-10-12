@@ -1,12 +1,4 @@
-:root{
-    --main-color: #0090f0;
-    --p-color: #7b7b7b;
-    --bg-color: #F3F3F3;
-    --white-color: #fff;
-    --color-heading: #253237;
-    --border-color: #d6d6d6d5;
-
-}
+/* Product Details Styling */
 
 .item_details{
     padding: 50px 0;

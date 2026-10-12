@@ -38,23 +38,37 @@ namespace E_commerce.Services
             if (Basket.Items.Count == 0) return Errors.Validation("Basket.Empty", "The basket is empty.");
 
 
-            // Payment: a card order needs its Stripe payment intent first (POST api/Payment/{basketId}).
-            // (Cash on delivery comes in a later phase.) A 400 tells the client what to do; the old code threw a 500.
-            if (string.IsNullOrEmpty(Basket.PaymentIntentId))
+            if (!Enum.TryParse<PaymentMethod>(orderDTO.PaymentMethod, true, out var paymentMethod))
+                return Errors.Validation("Order.InvalidPaymentMethod", $"Payment method '{orderDTO.PaymentMethod}' is not supported.");
+
+            // Payment: a card order needs its Stripe payment intent first.
+            if (paymentMethod == PaymentMethod.Card && string.IsNullOrEmpty(Basket.PaymentIntentId))
                 return Errors.Validation("Order.PaymentRequired", "Create the payment first: POST api/Payment/{basketId}.");
 
             var OrderRepo = UnitOfWork.GetRepository<Order, Guid>();
 
-            var Spec = new OrderWithPaymentIntentSpecifications(Basket.PaymentIntentId);
-            var ExistOrder = await OrderRepo.GetById(Spec);
-            if(ExistOrder is not null)
+            // Only clear previous order if paying by Card (because they share the same PaymentIntent)
+            if (paymentMethod == PaymentMethod.Card && !string.IsNullOrEmpty(Basket.PaymentIntentId))
             {
-                OrderRepo.Remove(ExistOrder);
+                var Spec = new OrderWithPaymentIntentSpecifications(Basket.PaymentIntentId);
+                var ExistOrder = await OrderRepo.GetById(Spec);
+                if (ExistOrder is not null)
+                {
+                    OrderRepo.Remove(ExistOrder);
+                }
             }
-
 
             // The basket was loaded with its products, so names and prices come straight from the catalog.
             List<OrderItem> OrderItems = Basket.Items.Select(item => CreateOrderItem(item, item.Product)).ToList();
+
+            var productRepo = UnitOfWork.GetRepository<Product, int>();
+            foreach (var item in Basket.Items)
+            {
+                if (item.Product.Stock < item.Quantity)
+                    return Errors.Conflict("Order.OutOfStock", $"Product '{item.Product.Name}' does not have enough stock. Available: {item.Product.Stock}");
+                item.Product.Stock -= item.Quantity;
+                productRepo.Update(item.Product);
+            }
 
             var DeliveryMethod = await UnitOfWork.GetRepository<DeliveryMethod , int>().GetById(orderDTO.DeliveryMethodId);
             if (DeliveryMethod == null) return Errors.NotFound("DeliveryMethod.NotFound", $"the delivery method with id {orderDTO.DeliveryMethodId} is not Found");
@@ -69,8 +83,9 @@ namespace E_commerce.Services
                 DeliveryMethod = DeliveryMethod,
                 Items = OrderItems,
                 SubTotal = SubTotal,
-                PaymentMethod = PaymentMethod.Card,
-                PaymentIntentId = Basket.PaymentIntentId
+                PaymentMethod = paymentMethod,
+                PaymentIntentId = paymentMethod == PaymentMethod.Card ? Basket.PaymentIntentId : null,
+                Status = OrderStatus.Pending
             };
 
             await OrderRepo.AddAsync(Order);
@@ -122,7 +137,34 @@ namespace E_commerce.Services
             
             return Order.ToDto(_pictures);
 
+        }
 
+        public async Task<Result<IEnumerable<OrderToReturnDTO>>> GetAllOrdersForAdminAsync()
+        {
+            // Null userId in OrderSpecifications might need a new spec, or we can just create one.
+            var Spec = new OrderSpecifications(userId: null);
+            var Orders = await UnitOfWork.GetRepository<Order, Guid>().GetAllAsync(Spec);
+
+            var Data = Orders.Select(o => o.ToDto(_pictures)).ToList();
+            return Result<IEnumerable<OrderToReturnDTO>>.Ok(Data);
+        }
+
+        public async Task<Result<OrderToReturnDTO>> UpdateOrderStatusAsync(Guid orderId, string statusText)
+        {
+            var Spec = new OrderSpecifications(orderId, userId: null);
+            var Order = await UnitOfWork.GetRepository<Order, Guid>().GetById(Spec);
+
+            if (Order is null)
+                return Errors.NotFound("Order Not Found");
+
+            if (!Enum.TryParse<OrderStatus>(statusText, true, out var status))
+                return Errors.Validation("InvalidStatus", $"Status '{statusText}' is not valid.");
+
+            Order.Status = status;
+            UnitOfWork.GetRepository<Order, Guid>().Update(Order);
+            await UnitOfWork.SaveChangesAsync();
+
+            return Order.ToDto(_pictures);
         }
 
         // Helper Method

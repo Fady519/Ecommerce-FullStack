@@ -27,6 +27,20 @@ namespace E_commerce.Presentation.Controllers
             return Ok(Basket);
         }
 
+        [HttpPost("webhook")]
+        public async Task<IActionResult> StripeWebhook()
+        {
+            var json = await new System.IO.StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+            var signature = Request.Headers["Stripe-Signature"];
 
+            if (string.IsNullOrEmpty(signature))
+                return BadRequest();
+
+            var success = await paymentService.ProcessWebhookAsync(json, signature!);
+            if (!success)
+                return BadRequest();
+
+            return Ok();
+        }
     }
 }

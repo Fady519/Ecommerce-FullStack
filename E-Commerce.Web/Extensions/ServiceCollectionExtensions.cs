@@ -58,6 +58,8 @@ namespace E_Commerce.Web.Extensions
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IImageService, ImageService>();
+            services.AddScoped<IDashboardService, DashboardService>();
 
             return services;
         }

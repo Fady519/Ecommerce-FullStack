@@ -92,5 +92,44 @@ namespace E_commerce.Services
             return saved.ToDto(pictures);
 
         }
+
+        public async Task<bool> ProcessWebhookAsync(string json, string signature)
+        {
+            try
+            {
+                var stripeEvent = Stripe.EventUtility.ConstructEvent(json, signature, configuration["Stripe:WebhookSecret"]);
+
+                if (stripeEvent.Type == "payment_intent.succeeded")
+                {
+                    var paymentIntent = stripeEvent.Data.Object as Stripe.PaymentIntent;
+                    await UpdateOrderStatusFromPaymentAsync(paymentIntent!.Id, true);
+                }
+                else if (stripeEvent.Type == "payment_intent.payment_failed")
+                {
+                    var paymentIntent = stripeEvent.Data.Object as Stripe.PaymentIntent;
+                    await UpdateOrderStatusFromPaymentAsync(paymentIntent!.Id, false);
+                }
+
+                return true;
+            }
+            catch (Stripe.StripeException)
+            {
+                return false;
+            }
+        }
+
+        private async Task UpdateOrderStatusFromPaymentAsync(string paymentIntentId, bool isSuccess)
+        {
+            var orderRepo = unitOfWork.GetRepository<Order, Guid>();
+            var spec = new E_commerce.Services.Specifications.OrderWithPaymentIntentSpecifications(paymentIntentId);
+            var order = await orderRepo.GetById(spec);
+
+            if (order != null)
+            {
+                order.Status = isSuccess ? OrderStatus.PaymentReceived : OrderStatus.PaymentFailed;
+                orderRepo.Update(order);
+                await unitOfWork.SaveChangesAsync();
+            }
+        }
     }
 }

@@ -21,6 +21,7 @@ namespace E_commerce.Presentation.Controllers
 
         // GET 
         [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<BasketDTO>> GetBasket(string id)
         {
             var Basket = await _basketService.GetBasketAsync(id, CurrentUserId);

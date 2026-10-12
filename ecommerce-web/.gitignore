@@ -13,6 +13,8 @@ dist-ssr
 *.local
 build/
 .env
+test-results/
+playwright-report/
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -84,7 +84,7 @@
     "Name": "Knitted Sweater",
     "Description": "Warm knitted sweater with a crew neckline and ribbed cuffs. Ideal for layering in winter.",
     "Price": 380,
-    "Stock": 0,
+    "Stock": 15,
     "PictureUrl": "images/products/KnittedSweater.jpg",
     "Type": "Tops",
     "Brand": "ZARA"
@@ -115,5 +115,59 @@
     "PictureUrl": "images/products/WoolScarf.jpg",
     "Type": "Accessories & Footwear",
     "Brand": "ZARA"
+  },
+  {
+    "Name": "Leather Oxford Shoes",
+    "Description": "Handcrafted formal leather shoes with non-slip rubber soles and cushioned insole.",
+    "Price": 750,
+    "Stock": 20,
+    "PictureUrl": "images/products/acc1.jpg",
+    "Type": "Accessories & Footwear",
+    "Brand": "Activ"
+  },
+  {
+    "Name": "Pro Wireless Headphones",
+    "Description": "Active noise-cancelling over-ear headphones with deep bass and 30-hour battery life.",
+    "Price": 850,
+    "Stock": 25,
+    "PictureUrl": "images/products/acc2.png",
+    "Type": "Electronics & Audio",
+    "Brand": "Sony"
+  },
+  {
+    "Name": "Chronograph Stainless Steel Watch",
+    "Description": "Water-resistant precision quartz watch with scratch-resistant mineral crystal and date display.",
+    "Price": 620,
+    "Stock": 14,
+    "PictureUrl": "images/products/acc3.jpg",
+    "Type": "Watches & Jewelry",
+    "Brand": "Casio"
+  },
+  {
+    "Name": "Vintage Aviator Sunglasses",
+    "Description": "UV400 polarized lenses with lightweight metal frame for maximum eye protection and retro flair.",
+    "Price": 280,
+    "Stock": 35,
+    "PictureUrl": "images/products/acc4.jpg",
+    "Type": "Accessories & Footwear",
+    "Brand": "ZARA"
+  },
+  {
+    "Name": "Smart Fitness Tracker Band",
+    "Description": "Heart-rate monitor, sleep tracker, and AMOLED color touch screen with waterproof casing.",
+    "Price": 490,
+    "Stock": 30,
+    "PictureUrl": "images/products/acc5.jpg",
+    "Type": "Electronics & Audio",
+    "Brand": "Apple"
+  },
+  {
+    "Name": "Minimalist Gold Plated Bracelet",
+    "Description": "Elegant 18k gold-plated everyday bracelet designed to complement any wrist wear.",
+    "Price": 220,
+    "Stock": 40,
+    "PictureUrl": "images/products/acc6.jpg",
+    "Type": "Watches & Jewelry",
+    "Brand": "Mango"
   }
 ]

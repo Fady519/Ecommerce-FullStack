@@ -13,7 +13,7 @@
     border-radius: 15px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.05);
     width: 100%;
-    max-width: 400px;
+    max-width: 440px;
     text-align: center;
 }
 
@@ -56,11 +56,22 @@
     box-shadow: 0 0 0 3px rgba(0, 98, 255, 0.1);
 }
 
+.input_group input.input_error {
+    border-color: #e53e3e;
+    background-color: #fff5f5;
+}
+
+.input_group input.input_error:focus {
+    box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.2);
+}
+
 .error_msg {
-    color: #ff4d4d;
+    color: #e53e3e;
     font-size: 12px;
-    margin-top: 5px;
+    margin-top: 6px;
     display: block;
+    line-height: 1.4;
+    font-weight: 500;
 }
 
 .main_btn {
@@ -80,6 +91,12 @@
 .main_btn:hover {
     opacity: 0.9;
     transform: translateY(-2px);
+}
+
+.main_btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .auth_footer {

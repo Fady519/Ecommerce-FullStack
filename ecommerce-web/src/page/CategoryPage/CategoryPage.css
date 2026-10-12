@@ -1,66 +1,230 @@
+.category_products {
+    padding: 40px 0 80px;
+    background-color: var(--bg-color, #f8fafc);
+    min-height: calc(100vh - 160px);
+    transition: background-color 0.25s ease;
+}
 
-.products{
-    padding: 50px 0;
+/* Banner */
+.catalog_header_banner {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border-radius: 16px;
+    padding: 35px 40px;
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+}
+
+.catalog_header_banner .catalog_tag {
+    display: inline-block;
+    background: rgba(0, 98, 255, 0.2);
+    color: #60a5fa;
+    border: 1px solid rgba(96, 165, 250, 0.3);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.catalog_header_banner h2 {
+    font-size: 32px;
+    color: #ffffff;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.catalog_header_banner p {
+    color: #94a3b8;
+    font-size: 15px;
+    max-width: 500px;
+}
+
+.catalog_stats {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px 28px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.catalog_stats .stats_count {
+    display: block;
+    font-size: 36px;
+    font-weight: 800;
+    color: #60a5fa;
+    line-height: 1;
+}
+
+.catalog_stats .stats_label {
+    font-size: 13px;
+    color: #cbd5e1;
+    margin-top: 6px;
+    display: block;
+}
+
+/* Toolbar */
+.catalog_toolbar {
+    background: var(--card-bg, #ffffff);
+    border-radius: 12px;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    box-shadow: var(--card-shadow, 0 2px 10px rgba(0, 0, 0, 0.03));
+    border: 1px solid var(--border-color, #e2e8f0);
+    flex-wrap: wrap;
+    gap: 16px;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.filters_group {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
     flex-wrap: wrap;
-    justify-content: center;
 }
 
-
-/* --- Responsive Category Page --- */
-
-/* الشاشات المتوسطة (تابلت) */
-@media (max-width: 992px) {
-    .products {
-        justify-content: center; /* سنترة المنتجات لما المساحة تضيق */
-        gap: 15px;
-        padding: 30px 0;
-    }
+.filter_item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-/* الموبايل (شاشات أقل من 768px) */
+.filter_item label,
+.sort_group label {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--p-color, #475569);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filter_item select,
+.sort_group select {
+    padding: 8px 14px;
+    border: 1px solid var(--border-color, #cbd5e1);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--color-heading, #0f172a);
+    background: var(--card-bg, #f8fafc);
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter_item select:focus,
+.sort_group select:focus {
+    border-color: var(--main-color);
+    box-shadow: 0 0 0 3px rgba(0, 98, 255, 0.1);
+}
+
+.reset_filter_btn {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.reset_filter_btn:hover {
+    background: #fca5a5;
+    color: #b91c1c;
+}
+
+.sort_group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Products Grid */
+.products_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 24px;
+}
+
+/* Empty State */
+.no_products_found {
+    text-align: center;
+    padding: 70px 20px;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+}
+
+.no_products_found .empty_icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.no_products_found h3 {
+    font-size: 22px;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.no_products_found p {
+    color: #64748b;
+    margin-bottom: 24px;
+    font-size: 15px;
+}
+
+.no_products_found .btn_clear {
+    background: var(--main-color);
+    color: #ffffff;
+    padding: 10px 24px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.no_products_found .btn_clear:hover {
+    background: #0052d4;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-    .category_products .top_slide {
+    .catalog_header_banner {
+        flex-direction: column;
         text-align: center;
-        padding: 20px 10px;
+        gap: 20px;
+        padding: 25px 20px;
     }
-
-    .category_products .top_slide h2 {
-        font-size: 24px;
+    .catalog_header_banner p {
+        margin: 0 auto;
     }
-
-    .category_products .top_slide::after {
-        left: 50%;
-        transform: translateX(-50%);
+    .catalog_toolbar {
+        flex-direction: column;
+        align-items: stretch;
     }
-
-    .products {
-        gap: 10px;
-        padding: 20px 5px;
-        justify-content: center;
+    .filters_group {
+        flex-direction: column;
+        align-items: stretch;
     }
-
-    /* نأكد إن الكارت بتاع المنتج نفسه (اللي جوه الـ Products) مرن */
-    .products .product {
-        width: calc(50% - 15px); /* يخلي كل منتجين جنب بعض بالظبط */
-        min-width: 160px; /* حماية عشان ميبقاش صغير أوي */
+    .filter_item, .sort_group {
+        justify-content: space-between;
+    }
+    .products_grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
     }
 }
-
-/* الموبايل الصغير جداً (أقل من 480px) */
-@media (max-width: 480px) {
-    .products {
-        gap: 8px;
-    }
-
-    .products .product {
-        width: calc(50% - 10px); /* تقليل المسافات أكتر للموبايل الصغير */
-        padding: 15px 8px; /* تقليل الـ padding الداخلي للكارت */
-    }
-}
-
-
-
-

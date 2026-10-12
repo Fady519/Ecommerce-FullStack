@@ -1,12 +1,4 @@
-:root{
-    --main-color: #0090f0;
-    --p-color: #7b7b7b;
-    --bg-color: #F3F3F3;
-    --white-color: #fff;
-    --color-heading: #253237;
-    --border-color: #d6d6d6d5;
-
-}
+/* Cart Styles */
 
 .checkout{
     margin: 50px 0;
@@ -197,23 +189,23 @@
 }
 
 .checkout .items .item_cart:hover{
-    background: #fafafa;
+    background: rgba(0, 144, 240, 0.05);
 }
 
 .checkout .ordersummeary{
     width: 45%;
     padding: 30px 25px;
     border: 1px solid var(--border-color);
-    box-shadow: 0px 15px 25px #0000000f;
+    box-shadow: var(--card-shadow);
     border-radius: 12px;
     margin: 0 auto;
-    background: var(--white-color);
+    background: var(--card-bg);
 }
 
 .checkout .bottom_summary .button_div button{
     width: 100%;
     background: var(--main-color);
-    color: var(--white-color);
+    color: #ffffff;
     border: none;
     padding: 15px 0;
     outline: none;
@@ -226,9 +218,9 @@
 }
 
 .checkout .bottom_summary .button_div button:hover{
-    background: #0077cc;
+    filter: brightness(1.1);
     transform: translateY(-2px);
-    box-shadow: 0 8px 15px #0000001a;
+    box-shadow: 0 8px 15px rgba(0, 144, 240, 0.3);
 }
 
 .checkout .items .item_cart{
@@ -238,7 +230,7 @@
 }
 
 .checkout .items .item_cart:hover{
-    background: #f9fbfd;
+    background: rgba(0, 144, 240, 0.05);
 }
 
 

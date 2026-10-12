@@ -28,27 +28,47 @@
 } */
 
 :root {
-    --main-color: #0062ff;      
-    --p-color: #5e6d82;         
-    --bg-color: #f4f7fa;        
-    --white-color: #fff;
-    --color-heading: #06152b;    
-    --border-color: #d1d9e6;     
-}
-/* 
-:root {
-    --main-color: #10b981;      
+    --main-color: #0090f0;      
     --p-color: #64748b;         
-    --bg-color: #f8fafc;         
-    --white-color: #fff;
-    --color-heading: #0f172a;   
-    --border-color: #e2e8f0;     
-} */
+    --bg-color: #f1f5f9;
+    --card-bg: #ffffff;        
+    --white-color: #ffffff;
+    --color-heading: #0f172a;    
+    --border-color: #e2e8f0;
+    --nav-bg: #0f172a;
+    --card-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
 
-body{
-    background: #fff;
+[data-theme="dark"] {
+    --main-color: #38bdf8;      
+    --p-color: #94a3b8;         
+    --bg-color: #0b1120;
+    --card-bg: #1e293b;        
+    --white-color: #1e293b;
+    --color-heading: #f8fafc;    
+    --border-color: #334155;
+    --nav-bg: #030712;
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+}
+
+body {
+    background: var(--bg-color);
+    color: var(--color-heading);
     font-family: "Inter", sans-serif;
-    padding-top: 150px;
+    padding-top: 148px;
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 165px; /* Ensures the page content underneath fixed header is always completely visible */
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding-top: 170px;
+    }
 }
 
 img{

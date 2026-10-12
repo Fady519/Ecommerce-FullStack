@@ -1,4 +1,4 @@
-using E_Commerce.Web.Extensions;
+﻿using E_Commerce.Web.Extensions;
 
 namespace E_Commerce.Web
 {
@@ -74,3 +74,4 @@ namespace E_Commerce.Web
         }
     }
 }
+public partial class Program { }

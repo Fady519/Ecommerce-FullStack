@@ -1,16 +1,22 @@
-import { Navigate } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { AuthContext } from '../components/Context/AuthContext';
 
-const ProtectedRoute = ({ children }) => {
-    // بنشيك لو اليوزر مسجل دخول (غالباً بنخزن كلمة 'user' أو 'token' في الـ localStorage)
-    const isAuthenticated = localStorage.getItem("user"); 
+export default function ProtectedRoute({ children }) {
+  const { isAuthenticated, loading } = useContext(AuthContext);
+  const location = useLocation();
 
-    if (!isAuthenticated) {
-        // لو مش مسجل، ابعته لصفحة اللوجن
-        return <Navigate to="/login" replace />;
-    }
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+        <p>Loading session...</p>
+      </div>
+    );
+  }
 
-    // لو مسجل، اعرض الصفحة اللي هو عايزها
-    return children;
-};
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
 
-export default ProtectedRoute;
+  return children;
+}

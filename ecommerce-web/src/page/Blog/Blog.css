@@ -1,79 +1,97 @@
 .blog-container {
   max-width: 1150px;
   margin: auto;
-  padding: 120px 20px;
-  font-family: 'Inter', sans-serif;
-  color: #333;
+  padding: 40px 20px 80px;
+  color: var(--color-heading);
 }
 
 .blog-title {
-  font-size: 32px;
+  font-size: clamp(28px, 4vw, 36px);
   margin-bottom: 30px;
-  color: #1a1a1a;
+  font-weight: 800;
+  color: var(--color-heading);
 }
 
 .blog-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px;
 }
 
 .blog-card {
-  background: #fff;
-  padding: 22px;
-  border-radius: 10px;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.07);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  padding: 24px;
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .blog-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.11);
+  transform: translateY(-6px);
+  border-color: var(--main-color);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
 }
 
 .blog-image {
   width: 100%;
-  height: 180px;
+  height: 200px;
   object-fit: cover;
   border-radius: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 16px;
   transition: transform 0.3s ease;
 }
 
 .blog-card:hover .blog-image {
-  transform: scale(1.05);
+  transform: scale(1.03);
+}
+
+.blog-card h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-heading);
+  margin-bottom: 8px;
 }
 
 .blog-date {
-  font-size: 14px;
-  margin: 8px 0;
-  color: #666;
+  font-size: 13.5px;
+  margin: 6px 0 12px;
+  color: var(--p-color);
+  font-weight: 500;
 }
 
 .blog-content {
-  line-height: 1.8;
-  margin-top: 15px;
-  color: #444;
+  line-height: 1.7;
+  color: var(--p-color);
+  font-size: 14.5px;
+  flex: 1;
 }
 
 .blog-detail-image {
   width: 100%;
-  height: 350px;
+  height: 380px;
   object-fit: cover;
-  border-radius: 12px;
-  margin-bottom: 20px;
+  border-radius: 16px;
+  margin-bottom: 25px;
 }
 
 .read-more, .back-link {
-  display: inline-block;
-  margin-top: 12px;
-  font-weight: bold;
-  color: #0077cc;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  font-weight: 700;
+  color: var(--main-color);
   text-decoration: none;
+  font-size: 14px;
+  transition: gap 0.2s ease;
 }
 
 .read-more:hover, .back-link:hover {
   text-decoration: underline;
+  gap: 10px;
 }
 
 @media (max-width: 768px) {
