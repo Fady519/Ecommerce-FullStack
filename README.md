@@ -1,14 +1,16 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:1E3A5F,50:2563EB,100:1D4ED8&height=220&section=header&text=E-Commerce%20RESTful%20API&fontSize=50&fontColor=ffffff&fontAlignY=38&desc=ASP.NET%20Core%20%7C%20Onion%20Architecture%20%7C%20Redis%20%7C%20Stripe%20%7C%20JWT&descSize=16&descAlignY=58&descColor=ffffff" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0ea5e9,50:3b82f6,100:6366f1&height=220&section=header&text=LuxeStore%20E-Commerce&fontSize=48&fontColor=ffffff&fontAlignY=38&desc=Full-Stack%20E-Commerce%20Platform%20%7C%20ASP.NET%20Core%20Web%20API%20%2B%20React%2019&descSize=16&descAlignY=58&descColor=e0f2fe" width="100%"/>
 
 </div>
 
 <div align="center">
 
-[![Swagger UI](https://img.shields.io/badge/📄%20Swagger%20UI-Explore%20API-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)](http://ecommercesolution.runasp.net/swagger/index.html)
-[![GitHub](https://img.shields.io/badge/GitHub-Source%20Code-181717?style=for-the-badge&logo=github)](https://github.com/Fady519/E_CommerceSolution)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Source%20Code-181717?style=for-the-badge&logo=github)](https://github.com/Fady519/Ecommerce-FullStack)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Fady%20Kaiser-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/fady-kaiser/)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Visit%20Now-6366F1?style=for-the-badge)](https://fady519.github.io/MyPortfolio2/)
+[![Framework](https://img.shields.io/badge/.NET%209-ASP.NET%20Core%20Web%20API-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![Frontend](https://img.shields.io/badge/React%2019-Vite-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 
 </div>
 
@@ -16,164 +18,68 @@
 
 <div align="center">
 
-## ⚙️ A production-grade E-Commerce API — built the right way.
-
-Onion Architecture. Generic Repository. Redis Caching. Stripe Payments. JWT Auth.  
-Every layer clean. Every endpoint secured. Every response standardized.
-
-</div>
-
----
-
-## 🖥️ API Explorer
-
-<div align="center">
-
-> 📄 **[Explore via Swagger UI](http://ecommercesolution.runasp.net/swagger/index.html)**
-
-> _Add a Swagger UI screenshot here_
+## 🛍️ Enterprise Full-Stack E-Commerce Platform — Clean Architecture & High Performance
+Onion / Clean Architecture · ASP.NET Core Identity & JWT · Redis & Output Cache · Dynamic Catalog · Admin Dashboard  
+Built for high-throughput, enterprise standards, and seamless modern user experience.
 
 </div>
 
 ---
 
-## ✨ Core Capabilities
-
-| Capability | Detail |
+## ✨ Key Features
+| Feature | Description |
 |---|---|
-| 🏗️ **Onion Architecture** | Domain → Application → Persistence — zero cross-layer leakage |
-| 🗃️ **Generic Repository + Specification Pattern** | ~40% less code duplication across all data-access modules |
-| ⚡ **Output Caching** | Catalog responses cached in memory (per query string) — no Redis server needed |
-| 🔐 **JWT Bearer Auth** | Stateless authentication with ASP.NET Identity and claims-based RBAC |
-| 💳 **Stripe Integration** | Full payment lifecycle — intent creation, confirmation, webhook handling |
-| 🛡️ **Custom Middleware** | Centralized exception handling + standardized API response envelope |
-| 📄 **Swagger / OpenAPI** | Fully documented and interactively testable endpoints |
-| 🔄 **Async Pipeline** | `async/await` throughout — maximum throughput, zero thread blocking |
+| 🏗️ **Clean / Onion Architecture** | Domain, Persistence, Services, Presentation, and Shared contracts separation |
+| 🔐 **Authentication & RBAC** | ASP.NET Identity with JWT Bearer tokens and Role-Based Authorization (`Admin`, `Customer`) |
+| ⚡ **High-Speed Caching & OutputCache** | Redis basket caching and response output caching with tag-based invalidation |
+| 📊 **Admin Intelligence Dashboard** | Real-time SQL aggregation for total sales, unit counts, revenue charts, and low-stock alerts |
+| 🏷️ **Dynamic Catalog & Search** | Paginated products with multi-filter brand/type queries, price sorting, and live keyword search |
+| 🛒 **Per-User Isolated Cart & Wishlist** | Strict user-key storage isolation preventing data leakage between guest and authenticated sessions |
+| 💳 **Checkout & Order Processing** | Atomic order creation with shipping address capture and multiple delivery method tiers |
+| 🌓 **Dark & Light Mode Engine** | Seamless luxury theme switcher with persistent preference stored in `localStorage` |
+| 🎭 **Automated Quality & E2E Testing** | Vitest unit/component suite + Playwright automated end-to-end user journey tests |
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ Architecture & System Design
+The backend is structured according to strict **Onion / Clean Architecture** principles to eliminate tight coupling:
 
 ```
-┌──────────────────────────────────────────────┐
-│                   API Layer                  │
-│   Controllers · Middleware · Swagger         │
-│   JWT Config · Exception Handler             │
-└─────────────────────┬────────────────────────┘
-                      │
-┌─────────────────────▼────────────────────────┐
-│              Application Layer               │
-│   Services · DTOs · AutoMapper Profiles      │
-│   Stripe Service · Interfaces                │
-└─────────────────────┬────────────────────────┘
-                      │
-┌─────────────────────▼────────────────────────┐
-│              Persistence Layer               │
-│   EF Core · Generic Repository               │
-│   Specification Pattern · Redis Cache        │
-└─────────────────────┬────────────────────────┘
-                      │
-┌─────────────────────▼────────────────────────┐
-│                Domain Layer                  │
-│   Entities · Interfaces · Business Rules     │
-└──────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────┐
+│               Presentation Layer                       │
+│    ASP.NET Core Web API · REST Controllers             │
+│    JWT Middleware · RFC 9457 Error Handling            │
+└───────────────────────────┬────────────────────────────┘
+                            │
+┌───────────────────────────▼────────────────────────────┐
+│                Services Layer                          │
+│    Business Services · AutoMapper · Specifications     │
+│    Image Upload Service · Dashboard Analytics          │
+└───────────────────────────┬────────────────────────────┘
+                            │
+┌───────────────────────────▼────────────────────────────┐
+│              Persistence Layer                         │
+│    StoreDbContext · StoreIdentityDbContext            │
+│    EF Core · Migrations · JSON Seeding · Redis         │
+└───────────────────────────┬────────────────────────────┘
+                            │
+┌───────────────────────────▼────────────────────────────┐
+│                Domain Layer                            │
+│    Entities (Product, Brand, Type, Order, Basket)      │
+│    Value Objects · Repository Contracts                │
+└────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🗄️ Database
+## 👥 User Roles & Access Control
+| Role | Permissions |
+|---|---|
+| **Admin** | Full access to Admin Portal (`/admin`): Add/Edit/Delete products, manage brands/types, view orders, inventory alerts & revenue charts |
+| **Customer** | Browse catalog, search, filter, manage cart & wishlist, proceed through checkout, view personal order history |
+| **Visitor / Guest** | Browse all products, categories, search, read blog journal, switch themes (Prompted to login before cart/checkout) |
 
-One SQL Server database (`ECommerceStore`) holds everything: users & roles (ASP.NET Identity), the catalog, baskets and orders.
-Baskets used to live in Redis and users in a second database; now every relationship is a real foreign key.
-
-```mermaid
-erDiagram
-    Users ||--o| Addresses : "saved address"
-    Users ||--o{ UserRoles : has
-    Roles ||--o{ UserRoles : "Admin / Customer"
-    Users ||--o{ Orders : places
-    Users |o--o{ Baskets : "owns (optional, guests have none)"
-
-    ProductBrands ||--o{ Products : brand
-    ProductTypes ||--o{ Products : type
-
-    Baskets ||--o{ BasketItems : contains
-    Products ||--o{ BasketItems : "in basket"
-    DeliveryMethods |o--o{ Baskets : "chosen at checkout"
-
-    Orders ||--|{ OrderItems : contains
-    DeliveryMethods ||--o{ Orders : "ships with"
-
-    Users {
-        string Id PK
-        string DisplayName
-        string Email
-        datetimeoffset CreatedAt
-    }
-    Addresses {
-        int Id PK
-        string UserId FK
-        string FirstName
-        string LastName
-        string Street
-        string City
-        string Country
-    }
-    Products {
-        int ID PK
-        string Name
-        decimal Price "CHECK >= 0"
-        int Stock "CHECK >= 0"
-        string PictureUrl
-        int BrandId FK
-        int TypeId FK
-    }
-    Baskets {
-        string ID PK "created by the browser"
-        string UserId FK "nullable"
-        int DeliveryMethodId FK "nullable"
-        string PaymentIntentId
-        datetimeoffset UpdatedAt
-    }
-    BasketItems {
-        int ID PK
-        string BasketId FK
-        int ProductId FK
-        int Quantity "CHECK 1..100"
-    }
-    Orders {
-        guid ID PK
-        string UserId FK
-        string UserEmail "snapshot"
-        datetimeoffset OrderDate
-        string Status "Pending, PaymentReceived, Shipped, Delivered..."
-        string PaymentMethod "Card / CashOnDelivery"
-        string Address_City "address copied into the order"
-        decimal SubTotal
-        int DeliveryMethodId FK
-    }
-    OrderItems {
-        int ID PK
-        guid OrderId FK
-        int ProductId "snapshot, no FK"
-        string ProductName "snapshot"
-        decimal Price "price paid"
-        int Quantity
-    }
-    DeliveryMethods {
-        int ID PK
-        string ShortName
-        string DeliveryTime
-        decimal Price
-    }
-```
-
-**Design choices**
-- **Prices are never stored in the basket** — they are read from `Products`, so a client can't send a cheaper price.
-- **Orders keep snapshots** (product name, price paid, address, email): editing a product or an address later doesn't rewrite order history. That's why `OrderItems.ProductId` has no foreign key.
-- **Deleting is safe**: removing a user or a delivery method that has orders is refused (`Restrict`); basket lines are removed with their basket (`Cascade`).
-- **Readable data**: order status and payment method are stored as text (`"Delivered"`, not `3`), and Identity tables have short names (`Users`, `Roles`).
-- **Seeding**: the catalog (13 products, 6 brands, 4 types, 4 delivery methods in EGP) is seeded on first start from JSON files embedded in the dll. `--seed-demo` adds 30 customers and ~3 months of orders (see below).
+> Enforced securely on both backend (`[Authorize(Roles = "Admin")]` / Policies) and frontend (`AdminRoute` & `ProtectedRoute`).
 
 ---
 
@@ -181,108 +87,122 @@ erDiagram
 
 <div align="center">
 
+### Backend
 ![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=csharp&logoColor=white)
-![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core%20Web%20API-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
+![.NET 9](https://img.shields.io/badge/.NET%209-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
+![ASP.NET Core Web API](https://img.shields.io/badge/ASP.NET%20Core%20Web%20API-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
 ![EF Core](https://img.shields.io/badge/EF%20Core-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
 ![SQL Server](https://img.shields.io/badge/SQL%20Server-CC2927?style=for-the-badge&logo=microsoftsqlserver&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
-![Stripe](https://img.shields.io/badge/Stripe-635BFF?style=for-the-badge&logo=stripe&logoColor=white)
+
+### Frontend
+![React 19](https://img.shields.io/badge/React%2019-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![React Router 7](https://img.shields.io/badge/React%20Router-CA4245?style=for-the-badge&logo=reactrouter&logoColor=white)
+![Framer Motion](https://img.shields.io/badge/Framer%20Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+
+### Testing & Tooling
+![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
+![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
-
-**Patterns & Architecture**
-
-![Onion Architecture](https://img.shields.io/badge/Onion%20Architecture-2563EB?style=for-the-badge)
-![Generic Repository](https://img.shields.io/badge/Generic%20Repository-1D4ED8?style=for-the-badge)
-![Specification Pattern](https://img.shields.io/badge/Specification%20Pattern-1E40AF?style=for-the-badge)
-![SOLID](https://img.shields.io/badge/SOLID%20Principles-1E3A8A?style=for-the-badge)
 
 </div>
 
 ---
 
-## 🔌 API Endpoints
-
-Access: 🌐 public · 👤 any logged-in user · 🛠️ admin only (`AdminOnly` policy → 401 without a token, 403 for customers).
-The user is always taken from the token — no endpoint accepts a user id or email to act on someone else's data.
-
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `POST` | `/api/Authentication/Register` | 🌐 | Create a **Customer** account (email = user name). 409 if the email is taken · rate limited |
-| `POST` | `/api/Authentication/Login` | 🌐 | JWT + roles + expiry. 5 wrong passwords lock the account for 10 min · rate limited |
-| `GET` | `/api/Authentication/emailExists?email=` | 🌐 | For the sign-up form · rate limited |
-| `GET` | `/api/Authentication/CurrentUser` | 👤 | The logged-in user (from the token) |
-| `GET` `PUT` | `/api/Account/profile` | 👤 | Display name and phone |
-| `GET` `PUT` | `/api/Account/address` | 👤 | Saved shipping address (pre-fills checkout) |
-| `POST` | `/api/Account/change-password` | 👤 | Needs the current password |
-| `GET` | `/api/Products` | 🌐 | Paged catalog: `brandId`, `typeId`, `sort`, `search`, `pageIndex`, `pageSize` (output cached) |
-| `GET` | `/api/Products/{id}` · `/brands` · `/types` | 🌐 | Product details, brands, types |
-| `GET` `POST` `DELETE` | `/api/Basket` | 🌐 | Guest basket by its random id; once owned by a user, only that user can use it |
-| `GET` | `/api/Basket/mine` | 👤 | The user's basket (e.g. on a new device) |
-| `POST` | `/api/Basket/{id}/claim` | 👤 | After login: link the guest basket to the user and merge an older one |
-| `POST` | `/api/Payment/{basketId}` | 👤 | Create/update the Stripe payment intent (amount computed on the server) |
-| `POST` `GET` | `/api/Order` · `/api/Order/{id}` | 👤 | Place an order · my orders (someone else's order → 404) |
-| `GET` | `/api/Order/DeliveryMethods` | 🌐 | Shipping options (EGP) |
-| `POST` | `/api/admin/users/unlock` | 🛠️ | Lift a lockout early |
-
-Login, register and emailExists allow **10 requests per minute per IP** (`429` + `Retry-After` after that).
-
-> Full interactive docs available on **[Swagger UI](http://ecommercesolution.runasp.net/swagger/index.html)**
-
----
-
-## 💳 Stripe Payment Flow
-
+## 📁 Repository Structure
 ```
-1. Client sends POST /api/payments
-         ↓
-2. API creates PaymentIntent via Stripe SDK
-         ↓
-3. Client confirms payment on frontend
-         ↓
-4. Stripe fires webhook → API updates order status
-         ↓
-5. Order confirmed ✅
+Project_5_Ecommerce/
+│
+├── E-commerce.Domain/               # Core entities, contracts & domain models
+├── E-commerce.Persistence/          # EF Core DbContexts, migrations, seeding
+├── E-commerce.Services/             # Application services, specifications, mapping
+├── E-commerce.ServicesAbstraction/  # Service interfaces
+├── E-commerce.Presentation/         # API Controllers (Catalog, Admin, Orders, Auth)
+├── E-commerce.Shared/               # DTOs, parameters, request/response models
+├── E-Commerce.Web/                  # Startup host, DI configuration, middleware, static files
+│
+└── ecommerce-web/                   # Frontend SPA (React 19 + Vite)
+    ├── src/
+    │   ├── components/              # Headers, modals, error boundaries, UI cards
+    │   ├── page/                    # Home, Catalog, Product Details, Cart, Admin, Orders
+    │   ├── services/                # Strongly-typed API client
+    │   └── test/                    # Vitest unit & component test suites
+    └── e2e/                         # Playwright End-to-End automated test specs
 ```
 
 ---
 
-## ⚙️ Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
+- [.NET 9 SDK](https://dotnet.microsoft.com/download)
+- [Node.js (v18+) & npm](https://nodejs.org/)
+- SQL Server (LocalDB or full instance)
 
-- [.NET 10 SDK](https://dotnet.microsoft.com/download)
-- SQL Server (LocalDB / Express / Developer) — no Redis needed anymore
-- A Stripe account in **test mode** (only for card payments)
-
-### Installation
-
+### 1. Clone & Backend Setup
 ```bash
-# 1. Clone the repo
-git clone https://github.com/Fady519/E_CommerceSolution.git
-cd E_CommerceSolution
+# Clone the repository
+git clone https://github.com/Fady519/Ecommerce-FullStack.git
+cd Ecommerce-FullStack
 
-# 2. Secrets (never in appsettings.json) — stored outside the repo with user-secrets
-dotnet user-secrets set "JWTOptions:SecretKey" "<a long random string, 32+ characters>" --project E-Commerce.Web
-dotnet user-secrets set "Stripe:SecretKey"     "sk_test_..."                          --project E-Commerce.Web
-dotnet user-secrets set "AdminUser:Password"   "<password for the admin account>"     --project E-Commerce.Web
-dotnet user-secrets set "DemoData:Password"    "<password for the demo logins>"       --project E-Commerce.Web
-
-# 3. Run — in Development the database (ECommerceStore on Server=.) is created, migrated and seeded automatically
-dotnet run --project E-Commerce.Web --launch-profile http
-
-# 4. (optional) Demo data: 30 customers + ~3 months of orders
-dotnet run --project E-Commerce.Web --launch-profile http -- --seed-demo
+# Restore dependencies & run backend API
+dotnet restore
+dotnet run --project E-Commerce.Web
+# API will start at http://localhost:5163 with Swagger at /swagger
 ```
 
-Swagger: `http://localhost:5163/swagger`. Demo logins: `customer@demo.store` and `admin@demo.store` (password = `DemoData:Password`).
-The connection string lives in `E-Commerce.Web/appsettings.Development.json` (change `Server=.` if your SQL Server instance has another name).
+### 2. Frontend Setup
+```bash
+# Navigate to the frontend directory
+cd ecommerce-web
+
+# Install packages
+npm install
+
+# Start Vite dev server
+npm run dev
+# Frontend will be live at http://localhost:5173
+```
+
+---
+
+## 🔑 Demo Credentials
+
+| Role | Email | Password |
+|---|---|---|
+| **Administrator** | `fadykaiser2004@gmail.com` | `Fady@Store2026` |
+| **Demo Customer** | `fady@demo.store` | `Pa$$w0rd123` |
+
+---
+
+## 🧪 Testing
+
+```bash
+cd ecommerce-web
+
+# Run Vitest unit & component tests
+npm run test
+
+# Run Playwright E2E scenarios (browsing, purchase, admin)
+npm run test:e2e
+
+# Run all test suites
+npm run test:all
+```
 
 ---
 
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:1E3A5F,50:2563EB,100:1D4ED8&height=100&section=footer" width="100%"/>
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Fady%20Kaiser-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/fady-kaiser/)
+[![GitHub](https://img.shields.io/badge/GitHub-Fady519-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Fady519)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Live%20Now-6366F1?style=for-the-badge)](https://fady519.github.io/MyPortfolio2/)
 
-**⭐ Found this useful? A star keeps the momentum going.**
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0ea5e9,50:3b82f6,100:6366f1&height=100&section=footer" width="100%"/>
+
+**⭐ If this project impressed you, drop a star on GitHub — it means a lot!**
 
 </div>
