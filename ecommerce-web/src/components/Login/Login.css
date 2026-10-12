@@ -99,6 +99,93 @@
     transform: none;
 }
 
+.quick_login_divider {
+    position: relative;
+    text-align: center;
+    margin: 22px 0 16px 0;
+}
+
+.quick_login_divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border-color, #e2e8f0);
+}
+
+.quick_login_divider span {
+    position: relative;
+    background: var(--white-color, #ffffff);
+    padding: 0 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: var(--p-color, #64748b);
+}
+
+.quick_login_actions {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.quick_admin_btn {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #ffffff;
+    border: none;
+    padding: 11px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.quick_admin_btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+    filter: brightness(1.05);
+}
+
+.quick_customer_btn {
+    background: rgba(14, 165, 233, 0.1);
+    border: 1px solid rgba(14, 165, 233, 0.35);
+    color: var(--main-color, #0284c7);
+    padding: 11px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.quick_customer_btn:hover:not(:disabled) {
+    background: rgba(14, 165, 233, 0.18);
+    transform: translateY(-1px);
+}
+
+[data-theme="dark"] .quick_login_divider span {
+    background: var(--card-bg, #1e293b);
+}
+
+[data-theme="dark"] .quick_customer_btn {
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.12);
+    border-color: rgba(56, 189, 248, 0.25);
+}
+
 .auth_footer {
     margin-top: 20px;
     font-size: 14px;

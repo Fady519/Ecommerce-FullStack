@@ -15,6 +15,33 @@ export default function Login() {
 
   const from = location.state?.from?.pathname || "/";
 
+  // Fast One-Click Demo Admin Login for Recruiter / Reviewer convenience
+  const handleAdminQuickLogin = async () => {
+    setIsSubmitting(true);
+    try {
+      const user = await login("fadykaiser2004@gmail.com", "Fady@Store2026");
+      toast.success(`Welcome Admin, ${user.displayName}!`);
+      navigate("/admin", { replace: true });
+    } catch (err) {
+      toast.error(err.message || "Failed to auto-login as Admin.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCustomerQuickLogin = async () => {
+    setIsSubmitting(true);
+    try {
+      const user = await login("fady@demo.store", "Pa$$w0rd123");
+      toast.success(`Welcome, ${user.displayName}!`);
+      navigate(from, { replace: true });
+    } catch (err) {
+      toast.error(err.message || "Failed to auto-login as Customer.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
@@ -80,6 +107,32 @@ export default function Login() {
             {isSubmitting ? "Signing in..." : "Login"}
           </button>
         </form>
+
+        <div className="quick_login_divider">
+          <span>OR QUICK DEMO ACCESS</span>
+        </div>
+
+        <div className="quick_login_actions">
+          <button 
+            type="button" 
+            className="quick_admin_btn" 
+            onClick={handleAdminQuickLogin}
+            disabled={isSubmitting}
+            title="Log in directly as Administrator"
+          >
+            ⚡ Login as Admin (1-Click)
+          </button>
+          
+          <button 
+            type="button" 
+            className="quick_customer_btn" 
+            onClick={handleCustomerQuickLogin}
+            disabled={isSubmitting}
+            title="Log in directly as Customer"
+          >
+            👤 Demo Customer
+          </button>
+        </div>
 
         <div className="auth_footer">
           <p>Don't have an account? <Link to="/register">Create Account</Link></p>
