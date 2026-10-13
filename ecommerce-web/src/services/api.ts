@@ -89,7 +89,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 export const api = {
   // Catalog
   products: {
-    getAll: (params?: { pageIndex?: number; pageSize?: number; brandId?: number; typeId?: number; sort?: string; search?: string }) => {
+    getAll: async (params?: { pageIndex?: number; pageSize?: number; brandId?: number; typeId?: number; sort?: string; search?: string }): Promise<PaginatedResult<ProductDto>> => {
       const query = new URLSearchParams();
       if (params?.pageIndex) query.append('pageIndex', params.pageIndex.toString());
       if (params?.pageSize) query.append('pageSize', params.pageSize.toString());
@@ -98,7 +98,30 @@ export const api = {
       if (params?.sort) query.append('sort', params.sort);
       if (params?.search) query.append('search', params.search);
       const q = query.toString();
-      return request<PaginatedResult<ProductDto>>(`/products${q ? `?${q}` : ''}`);
+      const firstPage = await request<PaginatedResult<ProductDto>>(`/products${q ? `?${q}` : ''}`);
+
+      const requestedSize = params?.pageSize || 0;
+      if (requestedSize > 10 && firstPage.count > firstPage.data.length && !params?.pageIndex) {
+        const pageSize = firstPage.pageSize || 10;
+        const totalPages = Math.ceil(firstPage.count / pageSize);
+        const remainingPromises: Promise<PaginatedResult<ProductDto>>[] = [];
+        for (let p = 2; p <= totalPages; p++) {
+          const nextQuery = new URLSearchParams(query);
+          nextQuery.set('pageIndex', p.toString());
+          remainingPromises.push(request<PaginatedResult<ProductDto>>(`/products?${nextQuery.toString()}`));
+        }
+        const results = await Promise.all(remainingPromises);
+        let allData = [...firstPage.data];
+        for (const res of results) {
+          if (res.data) allData = allData.concat(res.data);
+        }
+        return {
+          ...firstPage,
+          data: allData.slice(0, requestedSize),
+          pageSize: allData.length
+        };
+      }
+      return firstPage;
     },
     getById: (id: number) => request<ProductDto>(`/products/${id}`),
     getBrands: () => request<BrandDto[]>('/products/brands'),
