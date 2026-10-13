@@ -365,3 +365,5 @@ FodyWeavers.xsd
 /docs/
 SmokeTest-B3.ps1
 /scripts/
+publish-api/
+*.zip
