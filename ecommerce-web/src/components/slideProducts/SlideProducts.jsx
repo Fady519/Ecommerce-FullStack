@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import Product from './Product';
-import './SlideProducts.css';
+import './slideProducts.css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { Autoplay } from 'swiper/modules';
