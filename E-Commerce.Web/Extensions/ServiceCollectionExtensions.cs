@@ -182,7 +182,16 @@ namespace E_Commerce.Web.Extensions
             // Origins come from "Cors:AllowedOrigins" so the live site can be added without code changes.
             var origins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
             services.AddCors(options => options.AddPolicy(FrontendCorsPolicy, policy =>
-                policy.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod()));
+            {
+                if (origins.Length > 0)
+                {
+                    policy.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod();
+                }
+                else
+                {
+                    policy.SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod();
+                }
+            }));
 
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(options =>

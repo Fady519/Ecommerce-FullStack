@@ -1,4 +1,4 @@
-﻿using E_Commerce.Web.Extensions;
+using E_Commerce.Web.Extensions;
 
 namespace E_Commerce.Web
 {
@@ -42,12 +42,13 @@ namespace E_Commerce.Web
             // Empty error responses (unknown route 404, 401, 405...) get a Problem Details body too.
             app.UseStatusCodePages();
 
-            if (app.Environment.IsDevelopment())
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-            else
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "E-Commerce API v1");
+            });
+
+            if (!app.Environment.IsDevelopment())
             {
                 // Locally the React app calls http://localhost:5163; a redirect would break its CORS preflight.
                 app.UseHttpsRedirection();
