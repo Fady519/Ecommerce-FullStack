@@ -362,7 +362,7 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 # Local planning notes and internal test scripts
-/docs/
+/docs/INTERVIEW_NOTES.md
 SmokeTest-B3.ps1
 /scripts/
 publish-api/
