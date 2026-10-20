@@ -18,9 +18,8 @@
 
 <div align="center">
 
-## 🛍️ An enterprise full-stack E-Commerce platform — not just CRUD.
-**Clean Onion Architecture · ASP.NET Core 10 Web API · React 19 · Redis Caching · Stripe Payments · Role-Based Access Control · Admin Intelligence Portal**  
-Built to handle high-throughput modern retail operations with enterprise-level code quality and seamless user experience.
+## 🛍️ A full-stack E-Commerce platform — not just CRUD.
+**Onion Architecture · ASP.NET Core 10 Web API · React 19 · SQL Server · Output Caching · Stripe (test mode) + Cash on Delivery · Role-Based Access Control · Admin Console**
 
 </div>
 
@@ -53,22 +52,22 @@ Built to handle high-throughput modern retail operations with enterprise-level c
 
 | Feature | Description |
 |---|---|
-| 🏗️ **Clean Onion Architecture** | Strict separation of concerns across Domain, Persistence, Services, and Presentation layers |
-| 🔐 **Role-Based Access Control (RBAC)** | ASP.NET Identity with JWT Bearer tokens and claims-based authorization for `Admin` and `Customer` |
-| ⚡ **Redis Basket & Output Caching** | Distributed Redis caching for high-speed cart persistence and tag-evicted output caching |
-| 📊 **Admin Intelligence Dashboard** | Real-time aggregation of store revenue, sales volume, order lifecycle tracking, and low-stock alerts |
-| 🏷️ **Dynamic Multi-Filter Catalog** | Paginated catalog with multi-category filtering, brand selection, price sorting, and live search |
-| 🛒 **Isolated User Basket & Wishlist** | Strict user-token key isolation preventing cross-session cart and favorites leakage |
-| 💳 **Secure Payment Processing** | Dual-mode checkout supporting live **Stripe** card payments and Cash on Delivery |
-| 📦 **Order Lifecycle & Address Management** | Atomic order creation, delivery tier selection, shipping address capture, and history tracking |
-| 🌓 **Adaptive Dark / Light Theme** | Luxury modern UI theme engine with zero-flicker persistent user preferences |
-| 🎭 **Automated Testing Suite** | Comprehensive Vitest unit/component suite + Playwright automated end-to-end testing |
+| 🏗️ **Onion Architecture** | Separation of concerns across Domain, Persistence, Services, Services Abstraction and Presentation layers |
+| 🔐 **Role-Based Access Control (RBAC)** | ASP.NET Core Identity with JWT Bearer tokens and role-based policies for `Admin` and `Customer`, account lockout and login rate limiting |
+| 🗄️ **SQL Server Baskets & Output Caching** | Baskets stored in SQL Server (Baskets + BasketItems) with server-side pricing and owner-only access; catalog responses cached with ASP.NET Core Output Caching (5 min, tag-evicted on admin changes) |
+| 📊 **Admin Dashboard** | Total sales and order count (non-cancelled orders), top 5 best sellers, low-stock alerts (stock ≤ 10) and order status management |
+| 🏷️ **Filterable Catalog** | Paginated catalog (max 10 per page) with category and brand filters, name/price sorting and name search |
+| 🛒 **Isolated User Basket & Wishlist** | Owner-only baskets on the server (other users get 404) and per-account cart/favorites storage in the browser |
+| 💳 **Payments** | Cash on Delivery, or card via a server-side **Stripe** test-mode PaymentIntent with a signature-verified webhook (client-side card confirmation is not implemented yet) |
+| 📦 **Orders & Address Management** | Order creation with stock checks (409 when stock is insufficient), delivery method selection, shipping address snapshot and order history |
+| 🌓 **Dark / Light Theme** | Persisted theme preference (dark by default) |
+| 🎭 **Automated Tests** | xUnit integration tests (WebApplicationFactory + SQL Server), Vitest component tests and Playwright end-to-end scenarios |
 
 ---
 
 ## 🏗️ Architecture & System Design
 
-The backend is built following strict **Clean / Onion Architecture** principles with repository patterns and specifications:
+The backend follows **Onion Architecture** with the Repository, Unit of Work and Specification patterns:
 
 ```
 ┌────────────────────────────────────────────────────────┐
@@ -79,14 +78,14 @@ The backend is built following strict **Clean / Onion Architecture** principles 
                             │
 ┌───────────────────────────▼────────────────────────────┐
 │                Services Layer                          │
-│    Business Services · AutoMapper · Specifications     │
+│    Business Services · Mapping · Specifications        │
 │    Image Upload Service · Dashboard Analytics          │
 └───────────────────────────┬────────────────────────────┘
                             │
 ┌───────────────────────────▼────────────────────────────┐
 │              Persistence Layer                         │
 │    StoreDbContext · EF Core Migrations · SQL Server    │
-│    JSON Data Seeders · Unit of Work · Redis Store      │
+│    JSON Data Seeders · Unit of Work · Basket Repository│
 └───────────────────────────┬────────────────────────────┘
                             │
 ┌───────────────────────────▼────────────────────────────┐
@@ -102,27 +101,25 @@ The backend is built following strict **Clean / Onion Architecture** principles 
 
 | Role | Permissions & Access Scope |
 |---|---|
-| **Administrator** | Full access to **Admin Console** (`/admin`): Add/edit/delete products, manage brands & categories, quick stock adjustments (`+`/`-`), view order lifecycle & sales analytics |
-| **Customer** | Full shopping experience: Add to cart, manage wishlist, complete checkout via Stripe or Cash on Delivery, and track personal orders (`/orders`) |
+| **Administrator** | Full access to **Admin Console** (`/admin`): Add/edit/delete products with image upload, add/delete brands & categories, update order status, view sales totals, top sellers & low-stock alerts |
+| **Customer** | Full shopping experience: Add to cart, manage wishlist, check out with Cash on Delivery (card checkout creates a Stripe test-mode PaymentIntent), and track personal orders (`/orders`) |
 | **Visitor / Guest** | Browse catalog, filter categories, search products, read journal, toggle light/dark theme (Prompted to login for cart & checkout) |
 
-> ⚡ **Demo Experience:** The login page includes **1-Click Demo Buttons** (`⚡ Login as Admin` and `⚡ Login as Customer`) allowing recruiters and visitors to test all roles instantly without typing credentials!
+> ⚡ **Demo Experience:** The login page includes **1-Click Demo Buttons** (`⚡ Login as Admin (1-Click)` and `👤 Demo Customer`) so visitors can try the roles without typing credentials.
 
 ---
 
 ## 📊 Admin Intelligence & Revenue Analytics
 
-The integrated **Admin Console** surfaces real-time store metrics directly from the database:
+The integrated **Admin Console** reads its metrics from the database through the admin dashboard endpoint:
 
 ```
-✦ Total Revenue ($) & Total Orders Volume
-✦ Low-Stock Alerts & Real-time Inventory Warnings
-✦ One-Click Quick Stock Increments / Decrements
-✦ Catalog Item Management (Image Upload, Pricing, Categories, Brands)
-✦ Customer Orders Status Management (Pending, Payment Received, Shipped)
+✦ Total Sales (EGP) & Total Orders (non-cancelled orders)
+✦ Top 5 Best-Selling Products
+✦ Low-Stock Alerts (stock ≤ 10)
+✦ Catalog Management (Image Upload, Pricing, Categories, Brands)
+✦ Order Status Management (Pending, Payment Received, Shipped, Delivered, Cancelled)
 ```
-
-> Replaces static management with live, reactive administration.
 
 ---
 
@@ -136,9 +133,8 @@ The integrated **Admin Console** surfaces real-time store metrics directly from 
 ![ASP.NET Core Web API](https://img.shields.io/badge/ASP.NET%20Core%20Web%20API-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
 ![EF Core](https://img.shields.io/badge/EF%20Core-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
 ![SQL Server](https://img.shields.io/badge/SQL%20Server-CC2927?style=for-the-badge&logo=microsoftsqlserver&logoColor=white)
-![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT%20Bearer-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
-![Stripe](https://img.shields.io/badge/Stripe%20Payments-635BFF?style=for-the-badge&logo=stripe&logoColor=white)
+![Stripe](https://img.shields.io/badge/Stripe%20(test%20mode)-635BFF?style=for-the-badge&logo=stripe&logoColor=white)
 
 ### Architecture & Patterns
 ![Onion Architecture](https://img.shields.io/badge/Onion%20Architecture-0284C7?style=for-the-badge)
@@ -157,6 +153,7 @@ The integrated **Admin Console** surfaces real-time store metrics directly from 
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 
 ### Testing & Quality Assurance
+![xUnit](https://img.shields.io/badge/xUnit-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
 ![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
 ![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
@@ -168,7 +165,7 @@ The integrated **Admin Console** surfaces real-time store metrics directly from 
 ## 📁 Repository Structure
 
 ```
-Project_5_Ecommerce/
+Ecommerce-FullStack/
 │
 ├── E-commerce.Domain/               # Core business entities, contracts & repository interfaces
 ├── E-commerce.Persistence/          # DbContext, migrations, seeders, repository implementations
@@ -177,6 +174,7 @@ Project_5_Ecommerce/
 ├── E-commerce.Presentation/         # REST API Controllers (Catalog, Admin, Orders, Basket, Auth)
 ├── E-commerce.Shared/               # DTOs, query parameters, unified API responses
 ├── E-Commerce.Web/                  # API host Composition Root, DI registration, Swagger & Middleware
+├── E-commerce.IntegrationTests/     # xUnit integration tests (WebApplicationFactory)
 │
 ├── ecommerce-web/                   # Frontend SPA (React 19 + Vite)
 │   ├── src/
@@ -186,8 +184,7 @@ Project_5_Ecommerce/
 │   │   └── test/                    # Unit and component tests (Vitest)
 │   └── e2e/                         # Playwright automated End-to-End user journeys
 │
-├── docs/                            # Architectural documentation, roadmap & live screenshots
-└── scripts/                         # Database population, SQL seeding & helper scripts
+└── docs/                            # Screenshots
 ```
 
 ---
@@ -197,7 +194,7 @@ Project_5_Ecommerce/
 ### Prerequisites
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
 - [Node.js (v18+) & npm](https://nodejs.org/)
-- SQL Server (LocalDB, SSMS, or MonsterASP)
+- SQL Server (local default instance `Server=.`)
 
 ### 1. Backend Setup
 ```bash
@@ -205,9 +202,15 @@ Project_5_Ecommerce/
 git clone https://github.com/Fady519/Ecommerce-FullStack.git
 cd Ecommerce-FullStack
 
-# 2. Restore dependencies & run backend API
+# 2. Restore dependencies and set the required secrets
 dotnet restore
+dotnet user-secrets set "JWTOptions:SecretKey" "<random value, 32+ chars>" --project E-Commerce.Web
+dotnet user-secrets set "AdminUser:Password" "<admin password>" --project E-Commerce.Web
+dotnet user-secrets set "Stripe:SecretKey" "sk_test_..." --project E-Commerce.Web
+
+# 3. Run the API (Development applies migrations + seed data on startup)
 dotnet run --project E-Commerce.Web
+# optional demo data: set "DemoData:Password", then: dotnet run --project E-Commerce.Web -- --seed-demo
 
 # The API will be live at http://localhost:5163 with Swagger at /swagger
 ```
@@ -242,12 +245,15 @@ npm run dev
 ## 🧪 Automated Testing
 
 ```bash
+# Backend: xUnit integration tests (needs a local SQL Server, Server=.)
+dotnet test
+
 cd ecommerce-web
 
 # Run Vitest unit & component tests
 npm run test
 
-# Run Playwright E2E scenarios (Storefront, Cart, Checkout, Admin flow)
+# Run Playwright E2E scenarios (browse & search, login + add to cart, admin dashboard tabs) — needs the API and the Vite dev server running
 npm run test:e2e
 
 # Run all test suites combined
