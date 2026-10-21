@@ -23,7 +23,13 @@ namespace E_commerce.Shared.DTOs.ProductDTOs
 
         public string ProductType { get; set; } = default!;
 
+        /// <summary>Id of the type, so the admin edit form can preselect it.</summary>
+        public int ProductTypeId { get; set; }
+
         public string ProductBrand { get; set; } = default!;
+
+        /// <summary>Id of the brand, so the admin edit form can preselect it.</summary>
+        public int ProductBrandId { get; set; }
 
 
 

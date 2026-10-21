@@ -23,7 +23,9 @@ namespace E_commerce.Services.Mapping
             Price = product.Price,
             Stock = product.Stock,
             ProductBrand = product.ProductBrand?.Name ?? string.Empty,
+            ProductBrandId = product.BrandId,
             ProductType = product.ProductType?.Name ?? string.Empty,
+            ProductTypeId = product.TypeId,
         };
     }
 }

@@ -211,7 +211,8 @@ export default function AdminDashboard() {
     if (productForm.image) {
       formData.append('Image', productForm.image);
     }
-    if (productForm.pictureUrl) {
+    // Only send the URL when the admin typed a new one; the unchanged value is the absolute URL the API built.
+    if (productForm.pictureUrl && productForm.pictureUrl !== editingProduct?.pictureUrl) {
       formData.append('PictureUrl', productForm.pictureUrl);
     }
 
@@ -260,9 +261,9 @@ export default function AdminDashboard() {
     formData.append('Description', prod.description);
     formData.append('Price', prod.price.toString());
     formData.append('Stock', newStock.toString());
-    formData.append('ProductBrandId', prod.productBrandId.toString());
-    formData.append('ProductTypeId', prod.productTypeId.toString());
-    if (prod.pictureUrl) formData.append('PictureUrl', prod.pictureUrl);
+    formData.append('BrandId', String(prod.productBrandId));
+    formData.append('TypeId', String(prod.productTypeId));
+    // No PictureUrl: the API keeps the current picture (sending back the absolute URL it returned would store that URL instead).
 
     try {
       await api.admin.updateProduct(prod.id, formData);
