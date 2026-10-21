@@ -180,18 +180,11 @@ namespace E_Commerce.Web.Extensions
 
             // Browsers block calls from another origin (the React app) unless the API allows them.
             // Origins come from "Cors:AllowedOrigins" so the live site can be added without code changes.
+            // Only those origins are allowed: an empty list means no cross-origin calls at all, never "any origin".
+            // (Development lists http://localhost:5173, Production lists the Vercel storefront.)
             var origins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
             services.AddCors(options => options.AddPolicy(FrontendCorsPolicy, policy =>
-            {
-                if (origins.Length > 0)
-                {
-                    policy.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod();
-                }
-                else
-                {
-                    policy.SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod();
-                }
-            }));
+                policy.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod()));
 
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(options =>
