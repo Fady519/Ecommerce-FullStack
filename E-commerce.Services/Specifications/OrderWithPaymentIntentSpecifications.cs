@@ -10,10 +10,11 @@ namespace E_commerce.Services.Specifications
     public class OrderWithPaymentIntentSpecifications : BaseSpecifications<Order , Guid>
     {
 
-        public OrderWithPaymentIntentSpecifications(string IntentId) : base(O => O.PaymentIntentId == IntentId)
+        /// <param name="includeItems">Load the order lines too (needed to give their stock back when the order is replaced).</param>
+        public OrderWithPaymentIntentSpecifications(string IntentId, bool includeItems = false) : base(O => O.PaymentIntentId == IntentId)
         {
-
-
+            if (includeItems)
+                AddInclude(O => O.Items);
         }
 
     }

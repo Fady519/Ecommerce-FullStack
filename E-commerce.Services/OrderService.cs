@@ -46,14 +46,24 @@ namespace E_commerce.Services
                 return Errors.Validation("Order.PaymentRequired", "Create the payment first: POST api/Payment/{basketId}.");
 
             var OrderRepo = UnitOfWork.GetRepository<Order, Guid>();
+            var productRepo = UnitOfWork.GetRepository<Product, int>();
 
             // Only clear previous order if paying by Card (because they share the same PaymentIntent)
             if (paymentMethod == PaymentMethod.Card && !string.IsNullOrEmpty(Basket.PaymentIntentId))
             {
-                var Spec = new OrderWithPaymentIntentSpecifications(Basket.PaymentIntentId);
+                var Spec = new OrderWithPaymentIntentSpecifications(Basket.PaymentIntentId, includeItems: true);
                 var ExistOrder = await OrderRepo.GetById(Spec);
                 if (ExistOrder is not null)
                 {
+                    // The old order already took its pieces out of stock: put them back before the new
+                    // order takes them again. Saved together with the new order (one SaveChanges).
+                    foreach (var oldItem in ExistOrder.Items)
+                    {
+                        var oldProduct = await productRepo.GetById(oldItem.Product.ProductId);
+                        if (oldProduct is null) continue; // the product was deleted meanwhile
+                        oldProduct.Stock += oldItem.Quantity;
+                        productRepo.Update(oldProduct);
+                    }
                     OrderRepo.Remove(ExistOrder);
                 }
             }
@@ -61,7 +71,6 @@ namespace E_commerce.Services
             // The basket was loaded with its products, so names and prices come straight from the catalog.
             List<OrderItem> OrderItems = Basket.Items.Select(item => CreateOrderItem(item, item.Product)).ToList();
 
-            var productRepo = UnitOfWork.GetRepository<Product, int>();
             foreach (var item in Basket.Items)
             {
                 if (item.Product.Stock < item.Quantity)
