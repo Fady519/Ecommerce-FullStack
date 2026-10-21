@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace E_commerce.Shared.DTOs.DashboardDTOs
@@ -8,6 +9,14 @@ namespace E_commerce.Shared.DTOs.DashboardDTOs
         public int TotalOrders { get; set; }
         public IEnumerable<LowStockProductDTO> LowStockProducts { get; set; } = new List<LowStockProductDTO>();
         public IEnumerable<TopSellingProductDTO> TopSellingProducts { get; set; } = new List<TopSellingProductDTO>();
+        /// <summary>Sales per day for the last 7 days (UTC, oldest first, today last); days without sales are 0.</summary>
+        public IEnumerable<DailySalesDTO> DailySales { get; set; } = new List<DailySalesDTO>();
+    }
+
+    public class DailySalesDTO
+    {
+        public DateOnly Date { get; set; }
+        public decimal Total { get; set; }
     }
 
     public class LowStockProductDTO

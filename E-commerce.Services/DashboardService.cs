@@ -58,12 +58,27 @@ namespace E_commerce.Services
                 .Take(10)
                 .ToList();
 
+            // Last 7 days (UTC), same rule as TotalSales: every order that is not cancelled.
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var salesByDay = validOrders
+                .GroupBy(o => DateOnly.FromDateTime(o.OrderDate.UtcDateTime))
+                .ToDictionary(g => g.Key, g => g.Sum(o => o.SubTotal));
+            var dailySales = Enumerable.Range(0, 7)
+                .Select(offset => today.AddDays(offset - 6))
+                .Select(day => new DailySalesDTO
+                {
+                    Date = day,
+                    Total = salesByDay.GetValueOrDefault(day)
+                })
+                .ToList();
+
             var result = new DashboardStatisticsDTO
             {
                 TotalSales = totalSales,
                 TotalOrders = totalOrders,
                 TopSellingProducts = topSelling,
-                LowStockProducts = lowStock
+                LowStockProducts = lowStock,
+                DailySales = dailySales
             };
 
             return Result<DashboardStatisticsDTO>.Ok(result);

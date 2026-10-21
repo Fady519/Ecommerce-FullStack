@@ -57,7 +57,8 @@ export default function AdminDashboard() {
     totalSales: 0,
     totalOrders: 0,
     lowStockProducts: [],
-    topSellingProducts: []
+    topSellingProducts: [],
+    dailySales: []
   });
 
   // Products data & pagination
@@ -104,7 +105,7 @@ export default function AdminDashboard() {
   const loadOverviewData = async () => {
     try {
       const data = await api.admin.getDashboard();
-      setStats(data || { totalSales: 0, totalOrders: 0, lowStockProducts: [], topSellingProducts: [] });
+      setStats(data || { totalSales: 0, totalOrders: 0, lowStockProducts: [], topSellingProducts: [], dailySales: [] });
     } catch (err) {
       console.error("Error loading dashboard stats:", err);
     }
@@ -503,26 +504,27 @@ export default function AdminDashboard() {
                 Sales & Revenue Analytics Trend
               </h2>
               <span style={{ fontSize: '13px', color: 'var(--p-color)', fontWeight: 600 }}>
-                Live SQL Server Transaction Data
+                Last 7 days · non-cancelled orders (UTC)
               </span>
             </div>
 
             <div className="chart_bars_wrapper">
-              {[
-                { day: 'Mon', amount: 1420, height: '45%' },
-                { day: 'Tue', amount: 2180, height: '65%' },
-                { day: 'Wed', amount: 1890, height: '55%' },
-                { day: 'Thu', amount: 2950, height: '85%' },
-                { day: 'Fri', amount: 3400, height: '95%' },
-                { day: 'Sat', amount: 2800, height: '78%' },
-                { day: 'Sun', amount: 3650, height: '100%' },
-              ].map((item, idx) => (
-                <div key={idx} className="chart_bar_col">
-                  <span className="chart_bar_amount">${item.amount}</span>
-                  <div className="chart_bar_fill" style={{ height: item.height }} title={`Sales: $${item.amount}`} />
-                  <span className="chart_bar_label">{item.day}</span>
-                </div>
-              ))}
+              {(() => {
+                const days = stats.dailySales || [];
+                const max = Math.max(0, ...days.map(d => d.total || 0));
+                return days.map((item) => {
+                  const amount = (item.total || 0).toLocaleString(undefined, { maximumFractionDigits: 2 });
+                  const day = new Date(`${item.date}T00:00:00Z`).toLocaleDateString(undefined, { weekday: 'short', timeZone: 'UTC' });
+                  const height = max > 0 ? `${Math.max(2, Math.round(((item.total || 0) / max) * 100))}%` : '2%';
+                  return (
+                    <div key={item.date} className="chart_bar_col">
+                      <span className="chart_bar_amount">${amount}</span>
+                      <div className="chart_bar_fill" style={{ height }} title={`${item.date} · Sales: $${amount}`} />
+                      <span className="chart_bar_label">{day}</span>
+                    </div>
+                  );
+                });
+              })()}
             </div>
           </div>
 

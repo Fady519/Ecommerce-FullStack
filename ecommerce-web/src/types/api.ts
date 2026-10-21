@@ -106,4 +106,6 @@ export interface DashboardStatisticsDto {
   totalOrders: number;
   lowStockProducts: { id: number; name: string; stock: number }[];
   topSellingProducts: { productId: number; productName: string; totalQuantitySold: number }[];
+  /** Last 7 days (UTC, oldest first), non-cancelled orders; `date` is "YYYY-MM-DD". */
+  dailySales: { date: string; total: number }[];
 }
