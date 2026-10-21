@@ -99,10 +99,10 @@ namespace E_commerce.Services
             if (productDto.TypeId <= 0 || await _unitOfWork.GetRepository<ProductType, int>().GetById(productDto.TypeId) is null)
                 return Errors.Validation("Product.InvalidType", "The selected Category / Type does not exist. Please select a valid category.");
 
+            string? replacedPictureUrl = null;
             if (productDto.Image != null)
             {
-                if (!string.IsNullOrEmpty(product.PictureUrl) && !product.PictureUrl.StartsWith("http"))
-                    _imageService.DeleteImage(product.PictureUrl);
+                replacedPictureUrl = product.PictureUrl;
                 product.PictureUrl = await _imageService.SaveImageAsync(productDto.Image, "products");
             }
             else if (!string.IsNullOrWhiteSpace(productDto.PictureUrl))
@@ -120,6 +120,10 @@ namespace E_commerce.Services
 
             _unitOfWork.GetRepository<Product, int>().Update(product);
             await _unitOfWork.SaveChangesAsync();
+
+            // Same rule as delete: the old file goes only if it was an upload and nobody else uses it.
+            if (!string.IsNullOrEmpty(replacedPictureUrl))
+                await DeleteImageIfUnusedAsync(replacedPictureUrl, product.ID);
             return await GetProductByIdAsync(product.ID);
         }
 
@@ -129,12 +133,25 @@ namespace E_commerce.Services
             if (product == null)
                 return Errors.NotFound("Product.NotFound", $"Product With id {id} is Not Found");
 
-            if (!string.IsNullOrEmpty(product.PictureUrl))
-                _imageService.DeleteImage(product.PictureUrl);
-
             _unitOfWork.GetRepository<Product, int>().Remove(product);
             await _unitOfWork.SaveChangesAsync();
+
+            // The file goes only after the row is really gone.
+            if (!string.IsNullOrEmpty(product.PictureUrl))
+                await DeleteImageIfUnusedAsync(product.PictureUrl, product.ID);
             return true;
+        }
+
+        /// <summary>
+        /// Removes an uploaded picture file once no other product uses it.
+        /// ImageService itself refuses to touch seed pictures or anything it did not upload.
+        /// </summary>
+        private async Task DeleteImageIfUnusedAsync(string pictureUrl, int productId)
+        {
+            var usedElsewhere = await _unitOfWork.GetRepository<Product, int>()
+                .CountAsync(new ProductsWithPictureSpecification(pictureUrl, productId)) > 0;
+            if (!usedElsewhere)
+                _imageService.DeleteImage(pictureUrl);
         }
 
         public async Task<Result<BrandDTO>> CreateBrandAsync(string name)
