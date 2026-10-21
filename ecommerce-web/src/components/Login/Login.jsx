@@ -32,7 +32,7 @@ export default function Login() {
   const handleCustomerQuickLogin = async () => {
     setIsSubmitting(true);
     try {
-      const user = await login("fady@demo.store", "Pa$$w0rd123");
+      const user = await login("customer@demo.store", "Demo@Store2026");
       toast.success(`Welcome, ${user.displayName}!`);
       navigate(from, { replace: true });
     } catch (err) {

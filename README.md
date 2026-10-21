@@ -236,7 +236,7 @@ npm run dev
 | Role | Email | Password | Access Highlights |
 |---|---|---|---|
 | **Administrator** | `fadykaiser2004@gmail.com` | `Fady@Store2026` | Full Admin Console, Analytics, Product Management |
-| **Demo Customer** | `fady@demo.store` | `Pa$$w0rd123` | Cart, Wishlist, Checkout, Order Tracking |
+| **Demo Customer** | `customer@demo.store` | `Demo@Store2026` | Cart, Wishlist, Checkout, Order Tracking |
 
 > 💡 **Tip:** On the live website login screen, simply click the **1-Click Demo Buttons** to sign in instantly without typing anything!
 
