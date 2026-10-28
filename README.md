@@ -216,6 +216,8 @@ dotnet run --project E-Commerce.Web
 # The API will be live at http://localhost:5163 with Swagger at /swagger
 ```
 
+> **Production settings:** `E-Commerce.Web/appsettings.Production.json` is not in the repository because it holds the real connection string and keys. Copy `appsettings.Production.example.json` to that name on the machine you publish from, or set the same keys as environment variables on the host.
+
 ### 2. Frontend Setup
 ```bash
 # 1. Navigate to frontend

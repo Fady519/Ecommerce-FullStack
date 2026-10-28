@@ -367,3 +367,8 @@ SmokeTest-B3.ps1
 /scripts/
 publish-api/
 *.zip
+
+# Production settings hold real secrets: keep them on this machine only.
+# appsettings.Production.example.json shows the shape.
+E-Commerce.Web/appsettings.Production.json
+/_deploy/
