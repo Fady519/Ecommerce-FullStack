@@ -163,9 +163,8 @@ export default function Checkout() {
 
       // 2. If paying with Card, initialize Stripe PaymentIntent on backend
       if (paymentMethod === 'Card') {
-        const toastId = toast.loading('Authorizing card payment with Stripe...');
+        const toastId = toast.loading('Creating Stripe test payment...');
         await api.payment.createOrUpdateIntent(basketId);
-        await new Promise(resolve => setTimeout(resolve, 800));
         toast.dismiss(toastId);
       }
 
@@ -388,7 +387,7 @@ export default function Checkout() {
                   <FaCreditCard className="payment-icon" />
                   <div>
                     <div className="payment-title">Credit / Debit Card</div>
-                    <div className="payment-subtitle">Online Card Payment (Safe & Fast)</div>
+                    <div className="payment-subtitle">Stripe test mode</div>
                   </div>
                 </div>
 
@@ -415,6 +414,10 @@ export default function Checkout() {
                       ⚡ Fill Test Card (Stripe 4242)
                     </button>
                   </div>
+
+                  <p style={{ fontSize: '12.5px', color: 'var(--p-color)', marginBottom: '14px' }}>
+                    Test mode: the server creates a Stripe PaymentIntent for the order total. The card details stay in your browser and no card is charged.
+                  </p>
 
                   {/* Visual Card Mockup */}
                   <div className="card-visual-mockup">

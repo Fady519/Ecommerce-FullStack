@@ -5,9 +5,9 @@ import { api } from '../../services/api';
 
 function About() {
   const [stats, setStats] = useState({
-    products: 111,
-    categories: 10,
-    brands: 14,
+    products: '–',
+    categories: '–',
+    brands: '–',
     loading: true
   });
 
@@ -15,17 +15,16 @@ function About() {
     const loadDynamicStats = async () => {
       try {
         const [prodRes, typesRes, brandsRes] = await Promise.all([
-          api.products.getAll({ pageSize: 1 }).catch(() => null),
-          api.products.getTypes().catch(() => []),
-          api.products.getBrands().catch(() => [])
+          api.products.getAll({ pageSize: 1 }),
+          api.products.getTypes(),
+          api.products.getBrands()
         ]);
 
-        const prodCount = prodRes?.count || 111;
-        const typesCount = Array.isArray(typesRes) ? typesRes.length : (typesRes?.data?.length || 10);
-        const brandsCount = Array.isArray(brandsRes) ? brandsRes.length : (brandsRes?.data?.length || 14);
+        const typesCount = Array.isArray(typesRes) ? typesRes.length : (typesRes?.data?.length ?? 0);
+        const brandsCount = Array.isArray(brandsRes) ? brandsRes.length : (brandsRes?.data?.length ?? 0);
 
         setStats({
-          products: prodCount,
+          products: prodRes?.count ?? 0,
           categories: typesCount,
           brands: brandsCount,
           loading: false
@@ -48,7 +47,7 @@ function About() {
           <div className="container">
             <h1>About LuxeStore</h1>
             <p>
-              Engineered for seamless digital commerce. Backed by ASP.NET Core Web API and modern React, providing secure, lightning-fast shopping with guaranteed quality.
+              A demo shop built with an ASP.NET Core Web API and React.
             </p>
           </div>
         </div>
@@ -58,7 +57,7 @@ function About() {
           <div className="about-text">
             <h2>Our Story & Mission</h2>
             <p>
-              LuxeStore was built to demonstrate full-stack excellence in modern e-commerce. From robust entity-relational database design in SQL Server to responsive UI components, we focus on delivering real-time inventory synchronization, transparent order tracking, and uncompromising performance.
+              LuxeStore is a portfolio project that shows a complete online shop end to end: an ASP.NET Core 10 Web API with SQL Server behind it, and a React 19 storefront and admin console in front. Prices and stock are always checked on the server, and every order keeps its own copy of the item prices and shipping address.
             </p>
           </div>
 
@@ -71,7 +70,7 @@ function About() {
 
             <div className="feature">
               <h3>Secure Payment</h3>
-              <p>Protected checkout with Stripe Card Processing & Cash on Delivery.</p>
+              <p>Card payment through Stripe (test mode) or Cash on Delivery.</p>
             </div>
 
             <div className="feature">
@@ -84,23 +83,23 @@ function About() {
           <div className="about-stats">
 
             <div className="stat">
-              <h3>+{stats.products}</h3>
-              <p>Database Products</p>
+              <h3>{stats.products}</h3>
+              <p>Products</p>
             </div>
 
             <div className="stat">
               <h3>{stats.categories}</h3>
-              <p>Active Categories</p>
+              <p>Categories</p>
             </div>
 
             <div className="stat">
               <h3>{stats.brands}</h3>
-              <p>Official Brands</p>
+              <p>Brands</p>
             </div>
 
             <div className="stat">
-              <h3>100%</h3>
-              <p>Uptime & Reliability</p>
+              <h3>2</h3>
+              <p>Payment Options</p>
             </div>
 
           </div>

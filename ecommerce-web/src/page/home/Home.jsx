@@ -89,7 +89,7 @@ export default function Home() {
               <span style={{ fontSize: '28px' }}>💳</span>
               <div>
                 <h4 style={{ fontSize: '15px', color: 'var(--color-heading)', fontWeight: '700' }}>Secure Checkout</h4>
-                <p style={{ fontSize: '13px', color: 'var(--p-color)' }}>Stripe Card & Cash On Delivery</p>
+                <p style={{ fontSize: '13px', color: 'var(--p-color)' }}>Stripe (test mode) or Cash on Delivery</p>
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>

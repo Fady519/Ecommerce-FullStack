@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0ea5e9,50:3b82f6,100:6366f1&height=220&section=header&text=LuxeStore%20E-Commerce&fontSize=48&fontColor=ffffff&fontAlignY=38&desc=Enterprise%20Full-Stack%20Platform%20%7C%20ASP.NET%20Core%20Web%20API%20%2B%20React%2019&descSize=16&descAlignY=58&descColor=e0f2fe" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0ea5e9,50:3b82f6,100:6366f1&height=220&section=header&text=LuxeStore%20E-Commerce&fontSize=48&fontColor=ffffff&fontAlignY=38&desc=Full-Stack%20E-Commerce%20%7C%20ASP.NET%20Core%20Web%20API%20%2B%20React%2019&descSize=16&descAlignY=58&descColor=e0f2fe" width="100%"/>
 
 </div>
 
@@ -40,7 +40,7 @@
 ### 2. Multi-Filter Catalog, Live Search & Sorting
 ![LuxeStore Catalog](docs/screenshots/02_catalog.png)
 
-### 3. Integrated Admin Console & Inventory Intelligence
+### 3. Admin Console: Sales, Orders & Stock
 ![Admin Dashboard](docs/screenshots/03_admin_dashboard.png)
 
 ### 4. Interactive Swagger OpenAPI Specification (Live on MonsterASP)
@@ -109,12 +109,13 @@ The backend follows **Onion Architecture** with the Repository, Unit of Work and
 
 ---
 
-## 📊 Admin Intelligence & Revenue Analytics
+## 📊 Admin Dashboard & Sales Stats
 
 The integrated **Admin Console** reads its metrics from the database through the admin dashboard endpoint:
 
 ```
 ✦ Total Sales (EGP) & Total Orders (non-cancelled orders)
+✦ Daily Sales for the Last 7 Days
 ✦ Top 5 Best-Selling Products
 ✦ Low-Stock Alerts (stock ≤ 10)
 ✦ Catalog Management (Image Upload, Pricing, Categories, Brands)
